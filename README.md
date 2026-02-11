@@ -94,4 +94,4 @@ aprendizado, prática e evolução profissional.
 
 ## 📈 Status do Projeto
 
-🟡 Em fase inicial — definição de arquitetura e setup do ambiente.
+🟡 Em fase inicial — definição de arquitetura e setup do ambiente
