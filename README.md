@@ -31,7 +31,7 @@ Este projeto possui três objetivos principais:
 A aplicação segue uma arquitetura moderna baseada em separação de responsabilidades:
 
 <p align="center">
-  <img src="docs/architecture.png" alt="Diagrama de Arquitetura" width="400" hight=100%>
+  <img src="docs/architecture1.0.png" alt="Diagrama de Arquitetura" width="400" hight=100%>
 </p>
 
 ---
