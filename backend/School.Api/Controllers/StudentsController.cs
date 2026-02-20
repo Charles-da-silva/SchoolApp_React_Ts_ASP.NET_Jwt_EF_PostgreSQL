@@ -1,13 +1,13 @@
-// Usings necessários para trabalhar com ASP.NET MVC
+// Using necessários para trabalhar com ASP.NET MVC
 using Microsoft.AspNetCore.Mvc;
 
-// Usings para trabalhar com EF Core (LINQ, DbContext, etc.)
+// Using para trabalhar com EF Core (LINQ, DbContext, etc.)
 using Microsoft.EntityFrameworkCore;
 
-// Importa o DbContext da aplicação
+// Using para fazer a importação do DbContext da aplicação
 using School.Api.Infrastructure.Data;
 
-// Importa a entidade Student
+// Using para fazer a importação da entidade Student
 using School.Api.Domain.Entities;
 
 namespace School.Api.Controllers

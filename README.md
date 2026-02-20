@@ -43,7 +43,7 @@ A aplicação segue uma arquitetura moderna baseada em separação de responsabi
 | Frontend      | React + TypeScript            | Alta demanda no mercado           |
 | Backend       | ASP.Net Core MVC (C#)         | Robusto, padrão de mercado        |
 | ORM           | Entity Framework Core         | Padrão de mercado                 |
-| Banco         | PostgreSQL ou MySQL           | Open-source e baixo custo         |
+| Banco         | PostgreSQL em Docker          | Open-source e baixo custo         |
 | Auth          | JWT                           | Segurança moderna                 |
 | Versionamento | Git + GitHub                  | Histórico e colaboração           |
 
