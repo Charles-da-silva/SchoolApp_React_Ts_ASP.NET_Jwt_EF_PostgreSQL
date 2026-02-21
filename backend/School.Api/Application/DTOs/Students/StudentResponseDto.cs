@@ -7,11 +7,13 @@ namespace School.Api.Application.DTOs.Students
         /// Identificador único do aluno.
         public Guid Id { get; set; }
        
-        public string Name { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
        
         public string Email { get; set; } = string.Empty;
 
         /// Indica se o aluno está ativo.
         public bool IsActive { get; set; }
+
+        public DateTime DateOfBirth { get; set; }
     }
 }

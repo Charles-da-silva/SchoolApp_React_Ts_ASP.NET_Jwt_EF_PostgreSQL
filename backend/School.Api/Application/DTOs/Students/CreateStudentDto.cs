@@ -6,9 +6,12 @@ namespace School.Api.Application.DTOs.Students
     public class CreateStudentDto
     {
         /// Nome completo do aluno. Obrigatório.
-        public string Name { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
 
         /// Email do aluno. Obrigatório.
         public string Email { get; set; } = string.Empty;
+
+        /// Data de nascimento do aluno. Obrigatório.
+        public DateTime DateOfBirth { get; set; } // Valor padrão para evitar nulls
     }
 }
