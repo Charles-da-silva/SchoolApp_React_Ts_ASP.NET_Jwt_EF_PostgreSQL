@@ -152,5 +152,29 @@ namespace School.Api.Controllers
                 response
             );
         }
+
+        // Busca um aluno pelo ID.
+        // PUT: api/students/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStudent(Guid id, UpdateStudentDto dto)
+        {
+            // Buscar aluno no banco
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+
+            // Se não existir → retornar 404
+            if (student == null)
+                return NotFound();
+
+            // Estamos modificando a entidade rastreada pelo EF
+            student.FullName = dto.FullName;
+            student.Email = dto.Email;
+            student.DateOfBirth = dto.DateOfBirth;
+
+            // Salvar alterações no banco
+            await _context.SaveChangesAsync();
+
+            // Retornar 204 (Sucesso sem conteúdo)
+            return NoContent();
+        }
     }
 }
