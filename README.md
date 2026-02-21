@@ -98,38 +98,24 @@ Ele é desenvolvido como **atividade voluntária e educacional**, com foco em ap
 O projeto App Escolinha já possui a base arquitetural configurada e uma API REST funcional construída com:
 
    - ASP.NET Core
-
    - Entity Framework Core
-
    - PostgreSQL
-
    - Swagger para documentação e testes
 
 
 ✅ O que já foi implementado
 
    - Criação da solução e estrutura inicial do projeto
-
    - Configuração do DbContext e conexão com PostgreSQL (rodando em Docker)
-
    - Criação da entidade Student
-
    - Criação e aplicação da migration inicial (InitialCreate)
-
    - Geração automática do banco via EF Core
-
    - Implementação do StudentsController
-
    - Endpoint GET para listagem de alunos ativos
-
    - Endpoint POST para cadastro de alunos
-
    - Implementação de DTOs para entrada e saída de dados, fazendo validação de entrada de dados com DataAnnotations 
-
    - Correção e padronização do modelo (FullName e DateOfBirth)
-
    - Ajuste de inconsistências entre Entity, Migration e Banco
-
    - Testes via Swagger funcionando corretamente
 
 
@@ -138,24 +124,16 @@ O projeto App Escolinha já possui a base arquitetural configurada e uma API RES
 A aplicação segue uma estrutura baseada em:
 
    - Controllers → Responsáveis pelos endpoints
-
    - DTOs → Responsáveis pela comunicação externa
-
    - Entities → Representação das tabelas no banco
-
    - DbContext → Mapeamento ORM via EF Core
-
    - Migrations → Controle de versionamento do banco
 
 
 🎯 Próximos Passos
 
    - Implementar PUT e DELETE
-
    - Adicionar validações
-
    - Melhorar tratamento de erros
-
    - Evoluir para camadas de Service
-
    - Aplicar boas práticas de arquitetura
