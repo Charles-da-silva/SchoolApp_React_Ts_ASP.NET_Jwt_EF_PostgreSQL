@@ -46,8 +46,9 @@ namespace School.Api.Controllers
             - Buscar todos os alunos ativos no banco
             - Retornar uma lista em formato JSON
 
-            ==> async:  Indica que o método é assíncrono. Ele pode “esperar” uma operação demorada (banco, rede, disco) sem travar o servidor.
-            Em APIs reais, quase tudo que acessa banco deve ser async.
+            ==> async:  Indica que o método é assíncrono e nos permite usar o "await" dentro do método.
+                Ele pode “esperar” uma operação demorada (banco, rede, disco) sem travar o servidor.
+                Em APIs reais, quase tudo que acessa banco deve ser async.
 
             ==> Task<...>:  Representa uma operação que começa agora e termina no futuro. O tipo dentro do Task indica o que será retornado quando a operação terminar.
 
@@ -86,7 +87,7 @@ namespace School.Api.Controllers
         // Busca um aluno pelo ID.
         // GET: api/students/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {   
             /*
                 _context é o SchoolDbContext injetado no controller. Representa a conexão com o banco.
@@ -96,7 +97,7 @@ namespace School.Api.Controllers
                 s => s.Id == id é uma expressão lambda que compara o Id do aluno com o id passado na URL.
                 “Pegue cada Student (apelidado de s) e verifique se o Id dele é igual ao id recebido na URL”
             */
-            var student = _context.Students.FirstOrDefault(s => s.Id == id);  
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);  
 
             if (student == null)
                 return NotFound();
@@ -118,7 +119,7 @@ namespace School.Api.Controllers
         /// Cria um novo aluno.
         /// POST: api/students
         [HttpPost]
-        public IActionResult CreateStudent(CreateStudentDto dto)
+        public async Task<IActionResult> CreateStudent(CreateStudentDto dto)
         {
             // Converter DTO → Entity
             var student = new Student
@@ -133,7 +134,7 @@ namespace School.Api.Controllers
 
             // Salvar no banco
             _context.Students.Add(student);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Converter Entity → DTO de resposta
             var response = new StudentResponseDto
@@ -174,6 +175,26 @@ namespace School.Api.Controllers
             await _context.SaveChangesAsync();
 
             // Retornar 204 (Sucesso sem conteúdo)
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStudent(Guid id)
+        {
+            // Buscar aluno no banco
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+
+            // Se não existir ou já tiver sido desativado → retornar 404
+            if (student == null || !student.IsActive)
+            return NotFound();
+
+            // Soft Delete: Em vez de remover o registro, marcamos como inativo
+            student.IsActive = false;
+
+            // Salvar alterações no banco
+            await _context.SaveChangesAsync();
+
+            // DELETE padrão REST retorna 204
             return NoContent();
         }
     }
