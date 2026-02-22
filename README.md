@@ -135,14 +135,15 @@ A aplicação segue uma estrutura baseada em:
 
 🎯 Próximos Passos
 
-      - Implementar PUT e DELETE
-      - Adicionar validações
-      - Melhorar tratamento de erros
-      - Evoluir para camadas de Service
-      - Aplicar boas práticas de arquitetura
+   - Implementar PUT e DELETE
+   - Adicionar validações
+   - Melhorar tratamento de erros
+   - Evoluir para camadas de Service
+   - Aplicar boas práticas de arquitetura
 
 
-## 🚧 Alguns do problemas Enfrentados e Como Foram Resolvidos
+## 🚧 Alguns do problemas enfrentados e como Foram Resolvidos
+<br>
 
 🔴 Problema: Operações síncronas que poderiam causar bloqueio de thread
 
@@ -161,6 +162,7 @@ A aplicação segue uma estrutura baseada em:
 💡 Aprendizado
 
    - APIs modernas devem ser 100% assíncronas para suportar alta concorrência.
+<br>
 
 🔴 Problema: Exclusão física de registros (Delete Hard)
 
@@ -178,6 +180,7 @@ A aplicação segue uma estrutura baseada em:
 💡 Aprendizado
 
    - Soft Delete é padrão em sistemas reais que exigem histórico e rastreabilidade.
+<br>
 
 🔴 Problema: Falta de validação robusta na entrada de dados
 
@@ -198,6 +201,7 @@ A aplicação segue uma estrutura baseada em:
 💡 Aprendizado
 
    - Validação automática reduz código manual e aumenta confiabilidade.
+<br>
 
 🔴 Problema: Falta de padronização nos retornos HTTP
 
