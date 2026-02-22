@@ -4,7 +4,7 @@ Sistema web para gestão básica de uma escola de educação infantil (0 a 5 ano
 
 Este projeto está sendo inteiramente desenvolvido utilizando o ChatGPT e meus conhecimentos, sem auxílio de nenhuma outra pessoa ou qualquer material que tenha sido usado como referência. O objetivo da criação do projeto foi me desenvolver através de uma situação real de mercado e vivenciar uma experiência qual um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de compreender o problema, buscar, implementar e testar soluções, afim de entregar o melhor produto ao cliente final.
 Assim sendo, o ChatGPT entrou como um tutor, auxiliando na escolha das tecnologias, mas também como um professor, ensinando e orientando durante o desenvolvimento do software e suas funcionalidades. 
-<br>
+<br><br>
 
 ## 🎯 Objetivos do Projeto
 
@@ -37,20 +37,20 @@ A aplicação segue uma arquitetura moderna baseada em separação de responsabi
 ## 🧩 Tecnologias Utilizadas
 
 |    Camada     |          Tecnologia           |         Motivo da escolha         |
-||-|--|
+|---------------|-------------------------------|-----------------------------------|
 | Frontend      | React + TypeScript            | Alta demanda no mercado           |
 | Backend       | ASP.Net Core MVC (C#)         | Robusto, padrão de mercado        |
 | ORM           | Entity Framework Core         | Padrão de mercado                 |
 | Banco         | PostgreSQL em Docker          | Open-source e baixo custo         |
 | Auth          | JWT                           | Segurança moderna                 |
 | Versionamento | Git + GitHub                  | Histórico e colaboração           |
-<br>
+<br><br>
 
 ## 🔐 Autenticação
 
 A aplicação utilizará **JWT (JSON Web Token)** para autenticação.
 O token será gerado pela API e enviado pelo frontend em cada requisição protegida.
-<br>
+<br><br>
 
 ## 🏫 Funcionalidades Planejadas
 
@@ -75,13 +75,7 @@ O projeto é desenvolvido por **fases**, como em metodologias ágeis como SCRUM,
 7. Deploy econômico
 
 Cada etapa é explicada e versionada neste repositório no GitHub.
-<br>
-
-## 📌 Observação Importante
-
-Este projeto é desenvolvido como atividade voluntária e educacional, com **foco em aprendizado, prática e evolução profissional**.
-Futuramente tende a ser implementado em uma escola real, qual já foi definida.
-<br>
+<br><br>
 
 ## 📈 Status do Projeto
 
