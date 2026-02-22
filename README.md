@@ -140,11 +140,11 @@ A aplicação segue uma estrutura baseada em:
 
 🎯 Próximos Passos
 
-   - Implementar PUT e DELETE
-   - Adicionar validações
-   - Melhorar tratamento de erros
-   - Evoluir para camadas de Service
-   - Aplicar boas práticas de arquitetura
+      - Implementar PUT e DELETE
+      - Adicionar validações
+      - Melhorar tratamento de erros
+      - Evoluir para camadas de Service
+      - Aplicar boas práticas de arquitetura
 
 
 ## 🚧 Alguns do problemas Enfrentados e Como Foram Resolvidos
