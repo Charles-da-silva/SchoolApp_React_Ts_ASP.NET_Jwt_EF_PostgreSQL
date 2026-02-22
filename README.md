@@ -25,14 +25,6 @@ Este projeto possui três objetivos principais:
    - Servir como portfólio para vagas de estágio / dev júnior
 <br>
 
-## 🧠 Visão Geral da Arquitetura
-
-A aplicação segue uma arquitetura moderna baseada em separação de responsabilidades:
-
-<p align="center">
-  <img src="docs/architecture1.0.png" alt="Diagrama de Arquitetura" width="400" hight=100%>
-</p>
-<br>
 
 ## 🧩 Tecnologias Utilizadas
 
@@ -44,12 +36,7 @@ A aplicação segue uma arquitetura moderna baseada em separação de responsabi
 | Banco         | PostgreSQL em Docker          | Open-source e baixo custo         |
 | Auth          | JWT                           | Segurança moderna                 |
 | Versionamento | Git + GitHub                  | Histórico e colaboração           |
-<br><br>
 
-## 🔐 Autenticação
-
-A aplicação utilizará **JWT (JSON Web Token)** para autenticação.
-O token será gerado pela API e enviado pelo frontend em cada requisição protegida.
 <br><br>
 
 ## 🏫 Funcionalidades Planejadas
@@ -78,6 +65,7 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
 <br><br>
 
 ## 📈 Status do Projeto
+<br>
 
 🟢 Fase inicial concluída — API estruturada e funcional
 
@@ -87,7 +75,7 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
    - Entity Framework Core
    - PostgreSQL (rodando em Docker)
    - Swagger para documentação e testes
-
+<br>
 
 ✅ O que já foi implementado
 
@@ -105,18 +93,18 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
    - Correção e padronização do modelo (FullName e DateOfBirth)
    - Ajuste de inconsistências entre Entity, Migration e Banco
    - Testes via Swagger funcionando corretamente
-
+<br>
 
 🧱 Arquitetura Atual
 
-A aplicação segue uma estrutura baseada em:
+   A aplicação segue uma estrutura baseada em:
 
    - Controllers → Responsáveis pelos endpoints
    - DTOs → Responsáveis pela comunicação externa
    - Entities → Representação das tabelas no banco
    - DbContext → Mapeamento ORM via EF Core
    - Migrations → Controle de versionamento do banco
-
+<br>
 
 🎯 Próximos Passos
 
