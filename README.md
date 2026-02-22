@@ -4,8 +4,7 @@ Sistema web para gestão básica de uma escola de educação infantil (0 a 5 ano
 
 Este projeto está sendo inteiramente desenvolvido utilizando o ChatGPT e meus conhecimentos, sem auxílio de nenhuma outra pessoa ou qualquer material que tenha sido usado como referência. O objetivo da criação do projeto foi me desenvolver através de uma situação real de mercado e vivenciar uma experiência qual um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de compreender o problema, buscar, implementar e testar soluções, afim de entregar o melhor produto ao cliente final.
 Assim sendo, o ChatGPT entrou como um tutor, auxiliando na escolha das tecnologias, mas também como um professor, ensinando e orientando durante o desenvolvimento do software e suas funcionalidades. 
-
-
+<br>
 
 ## 🎯 Objetivos do Projeto
 
@@ -24,8 +23,7 @@ Este projeto possui três objetivos principais:
    - Demonstrar evolução contínua no GitHub
    - Criar um histórico real de decisões técnicas
    - Servir como portfólio para vagas de estágio / dev júnior
-
-
+<br>
 
 ## 🧠 Visão Geral da Arquitetura
 
@@ -34,8 +32,7 @@ A aplicação segue uma arquitetura moderna baseada em separação de responsabi
 <p align="center">
   <img src="docs/architecture1.0.png" alt="Diagrama de Arquitetura" width="400" hight=100%>
 </p>
-
-
+<br>
 
 ## 🧩 Tecnologias Utilizadas
 
@@ -47,16 +44,13 @@ A aplicação segue uma arquitetura moderna baseada em separação de responsabi
 | Banco         | PostgreSQL em Docker          | Open-source e baixo custo         |
 | Auth          | JWT                           | Segurança moderna                 |
 | Versionamento | Git + GitHub                  | Histórico e colaboração           |
-
-
-
+<br>
 
 ## 🔐 Autenticação
 
 A aplicação utilizará **JWT (JSON Web Token)** para autenticação.
 O token será gerado pela API e enviado pelo frontend em cada requisição protegida.
-
-
+<br>
 
 ## 🏫 Funcionalidades Planejadas
 
@@ -66,8 +60,7 @@ O token será gerado pela API e enviado pelo frontend em cada requisição prote
 - Organização de turmas (relacionado-as com professores e alunos)
 - Controle de acesso por usuário
 - Relatórios
-
-
+<br>
 
 ## 🚀 Metodologia de Desenvolvimento
 
@@ -82,21 +75,19 @@ O projeto é desenvolvido por **fases**, como em metodologias ágeis como SCRUM,
 7. Deploy econômico
 
 Cada etapa é explicada e versionada neste repositório no GitHub.
-
-
+<br>
 
 ## 📌 Observação Importante
 
 Este projeto é desenvolvido como atividade voluntária e educacional, com **foco em aprendizado, prática e evolução profissional**.
 Futuramente tende a ser implementado em uma escola real, qual já foi definida.
-
-
+<br>
 
 ## 📈 Status do Projeto
 
 🟢 Fase inicial concluída — API estruturada e funcional
 
-O projeto App Escolinha já possui a base arquitetural configurada e uma API REST funcional construída com:
+   O projeto App Escolinha já possui a base arquitetural configurada e uma API REST funcional construída com:
 
    - ASP.NET Core
    - Entity Framework Core
@@ -140,7 +131,7 @@ A aplicação segue uma estrutura baseada em:
    - Melhorar tratamento de erros
    - Evoluir para camadas de Service
    - Aplicar boas práticas de arquitetura
-
+<br>
 
 ## 🚧 Alguns do problemas enfrentados e como Foram Resolvidos
 <br>
