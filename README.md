@@ -4,6 +4,12 @@ Sistema web para gestão básica de uma escola de educação infantil (0 a 5 ano
 desenvolvido como **projeto real** aplicado a um cenário verdadeiro, com foco em
 **aprendizado prático, arquitetura de software e boas práticas de mercado**.
 
+Este projeto está sendo inteiramente desenvolvido utilizando o ChatGPT, sem auxílio de nenhuma outra pessoa
+ou qualquer material que tenha sido usado como referência. O intuito foi aprender e vivenciar
+uma situação real qual um desenvolvedor é contratado para desenvolver uma solução para uma empresa.
+Assim sendo, o ChatGPT entrou como um tutor, auxiliando na escolha das tecnologias, mas também um professor
+ensinando e orientando durante o desenvolvimento do software e suas funcionalidades. 
+
 ---
 
 ## 🎯 Objetivos do Projeto
@@ -38,7 +44,7 @@ A aplicação segue uma arquitetura moderna baseada em separação de responsabi
 
 ## 🧩 Tecnologias Utilizadas
 
-|    Camada     |          Tecnologia           |             Motivo                |
+|    Camada     |          Tecnologia           |         Motivo da escolha         |
 |---------------|-------------------------------|-----------------------------------|
 | Frontend      | React + TypeScript            | Alta demanda no mercado           |
 | Backend       | ASP.Net Core MVC (C#)         | Robusto, padrão de mercado        |
@@ -52,8 +58,8 @@ A aplicação segue uma arquitetura moderna baseada em separação de responsabi
 
 ## 🔐 Autenticação
 
-A aplicação utiliza **JWT (JSON Web Token)** para autenticação.
-O token é gerado pela API e enviado pelo frontend em cada requisição protegida.
+A aplicação utilizará **JWT (JSON Web Token)** para autenticação.
+O token será gerado pela API e enviado pelo frontend em cada requisição protegida.
 
 ---
 
@@ -61,16 +67,16 @@ O token é gerado pela API e enviado pelo frontend em cada requisição protegid
 
 - Cadastro e gestão de alunos
 - Cadastro de responsáveis
-- Cadastro de funcionários
-- Organização de turmas
-- Relatórios simples
+- Cadastro e gestão de funcionários (diretor(a), professores, cozinheira, limpeza)
+- Organização de turmas (relacionado-as com professores e alunos)
 - Controle de acesso por usuário
+- Relatórios
 
 ---
 
 ## 🚀 Metodologia de Desenvolvimento
 
-O projeto é desenvolvido por **fases**, sempre priorizando entendimento antes do código:
+O projeto é desenvolvido por **fases**, como em metodologias ágeis como SCRUM, sempre priorizando entendimento antes do código:
 
 1. Fundamentos e arquitetura
 2. Backend mínimo
@@ -80,14 +86,14 @@ O projeto é desenvolvido por **fases**, sempre priorizando entendimento antes d
 6. Funcionalidades reais
 7. Deploy econômico
 
-Cada etapa é explicada e versionada no GitHub.
+Cada etapa é explicada e versionada neste repositório no GitHub.
 
 ---
 
 ## 📌 Observação Importante
 
-Este projeto **não tem fins comerciais**.
-Ele é desenvolvido como **atividade voluntária e educacional**, com foco em aprendizado, prática e evolução profissional.
+Este projeto é desenvolvido como atividade voluntária e educacional, com **foco em aprendizado, prática e evolução profissional**.
+Futuramente tende a ser colocado em produção em uma escola real, qual já está em negociação.
 
 ---
 
@@ -99,7 +105,7 @@ O projeto App Escolinha já possui a base arquitetural configurada e uma API RES
 
    - ASP.NET Core
    - Entity Framework Core
-   - PostgreSQL
+   - PostgreSQL (rodando em Docker)
    - Swagger para documentação e testes
 
 
@@ -113,7 +119,9 @@ O projeto App Escolinha já possui a base arquitetural configurada e uma API RES
    - Implementação do StudentsController
    - Endpoint GET para listagem de alunos ativos
    - Endpoint POST para cadastro de alunos
-   - Implementação de DTOs para entrada e saída de dados, fazendo validação de entrada de dados com DataAnnotations 
+   - Endpoint PUT para atualizar o cadastro de alunos
+   - Endpoint DELETE para excluir alunos (soft delete)
+   - Implementação de DTOs para entrada e saída de dados, fazendo validações com DataAnnotations 
    - Correção e padronização do modelo (FullName e DateOfBirth)
    - Ajuste de inconsistências entre Entity, Migration e Banco
    - Testes via Swagger funcionando corretamente
@@ -137,3 +145,90 @@ A aplicação segue uma estrutura baseada em:
    - Melhorar tratamento de erros
    - Evoluir para camadas de Service
    - Aplicar boas práticas de arquitetura
+
+
+## 🚧 Alguns do problemas Enfrentados e Como Foram Resolvidos
+
+Operações síncronas que poderiam causar bloqueio de thread
+
+   🔴 Problema
+
+      - Uso potencial de métodos síncronos do EF Core poderia:
+      - Bloquear threads
+      - Reduzir escalabilidade
+      - Comprometer performance sob carga
+
+   ✅ Solução
+
+      - Adoção completa de:
+      - ToListAsync()
+      - FirstOrDefaultAsync()
+      - SaveChangesAsync()
+
+   💡 Aprendizado
+
+      - APIs modernas devem ser 100% assíncronas para suportar alta concorrência.
+
+Exclusão física de registros (Delete Hard)
+
+   🔴 Problema
+
+      - Remover registros permanentemente pode causar:
+      - Perda irreversível de dados
+      - Problemas de auditoria
+      - Quebra de integridade relacional
+
+   ✅ Solução
+
+      - Implementação de Soft Delete:
+      - student.IsActive = false;
+      - Filtragem apenas de registros ativos.
+
+   💡 Aprendizado
+
+      - Soft Delete é padrão em sistemas reais que exigem histórico e rastreabilidade.
+
+Falta de validação robusta na entrada de dados
+
+   🔴 Problema
+
+      - Sem validações, a API poderia aceitar:
+      - Emails inválidos
+      - Campos vazios
+      - Dados inconsistentes
+
+   ✅ Solução
+
+      Uso de:
+
+      - [Required]
+      - [EmailAddress]
+      - [MinLength]
+      - [ApiController] para validação automática
+
+   💡 Aprendizado
+
+      - Validação automática reduz código manual e aumenta confiabilidade.
+
+Falta de padronização nos retornos HTTP
+
+   🔴 Problema
+
+      - Sem retorno estruturado:
+      - API inconsistente
+      - Difícil consumo por frontend
+      - Falta de semântica REST
+
+   ✅ Solução
+
+      Uso adequado de:
+
+      - Ok()
+      - CreatedAtAction()
+      - NotFound()
+      - BadRequest()
+      - NoContent()
+
+   💡 Aprendizado
+
+      - Semântica HTTP correta melhora interoperabilidade e profissionalismo, seguindo os padrões REST.
