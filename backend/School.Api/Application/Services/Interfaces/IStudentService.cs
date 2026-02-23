@@ -1,4 +1,5 @@
 // Using para fazer a importação da entidade Student
+using School.Api.Application.Common;
 using School.Api.Application.DTOs.Students;
 
 namespace School.Api.Application.Services.Interfaces
@@ -16,7 +17,7 @@ namespace School.Api.Application.Services.Interfaces
 
         Task<StudentResponseDto?> GetByIdAsync(Guid id);
 
-        Task<StudentResponseDto> CreateAsync(CreateStudentDto dto);
+        Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto);
 
         Task<bool> UpdateAsync(Guid id, UpdateStudentDto dto);
 

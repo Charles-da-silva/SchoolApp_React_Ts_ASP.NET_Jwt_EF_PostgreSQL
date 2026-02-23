@@ -12,6 +12,9 @@ using School.Api.Domain.Entities;
 
 using School.Api.Application.DTOs.Students;
 
+// Importante Exception personalizada para regras de negócio
+using School.Api.Application.Common;
+
 namespace School.Api.Application.Services
 {
     /*
@@ -110,9 +113,35 @@ namespace School.Api.Application.Services
         }
 
         /// Cria um novo aluno.
-        public async Task<StudentResponseDto> CreateAsync(CreateStudentDto dto)
+        public async Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto)
         {   
-            // Convertendo DTO → Entity
+            // Verifica se já existe aluno com mesmo email
+            var existingStudent = await _context.Students
+                .FirstOrDefaultAsync(s => s.Email == dto.Email);
+
+            if (existingStudent != null)
+            {
+                // Se já existe um aluno com o mesmo email, criamos uma variável existingDto para retornar os dados do aluno
+                var existingDto = new StudentResponseDto
+                {
+                    Id = existingStudent.Id,
+                    FullName = existingStudent.FullName,
+                    Email = existingStudent.Email,
+                    DateOfBirth = existingStudent.DateOfBirth
+                };
+
+                // Invocamos o método Result<StudentResponseDto>.Fail para retornar um resultado de falha, 
+                // passando a mensagem de erro, os dados do aluno existente (variável existingDto) e indicando se é possível reativar o aluno. 
+                // Isso permite que o Controller trate essa situação de forma adequada, retornando um status HTTP 400 Bad Request com informações úteis para o cliente.
+                return Result<StudentResponseDto>.Fail(
+                    "Já existe um aluno com este email.",
+                    existingDto,
+                    canReactivate: !existingStudent.IsActive
+                );
+            }
+
+            // Se o email ainda não existe, o método continua para criar um novo aluno normalmente, 
+            // convertendo o DTO de criação (CreateStudentDto) para a entidade Student, salvando no banco e 
             var student = new Student
             {
                 Id = Guid.NewGuid(),           // Gera identificador único. Evita dependência do banco para gerar ID. Boa prática para sistemas distribuídos.
@@ -128,13 +157,16 @@ namespace School.Api.Application.Services
             await _context.SaveChangesAsync();
 
             // Convertendo Entity → DTO de resposta
-            return new StudentResponseDto
+            var response = new StudentResponseDto
             {
                 Id = student.Id,
                 FullName = student.FullName,
                 Email = student.Email,
-                DateOfBirth = student.DateOfBirth,
+                DateOfBirth = student.DateOfBirth
             };
+
+            // Retornando um resultado de sucesso com os dados do aluno criado (StudentResponseDto armazendo dentro da variável response).
+            return Result<StudentResponseDto>.Ok(response);
         }
 
         // Tipo de retorno bool para indicar sucesso ou falha da operação, podendo ser tratado no Controller para retornar o status HTTP adequado (200, 404, etc.)

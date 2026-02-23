@@ -32,7 +32,7 @@ namespace School.Api.Controllers
             Injeção de Dependência do serviço.       
             O .NET cria o StudentService automaticamente porque registramos no Program.cs. 
         */
-         public StudentsController(IStudentService studentService)
+        public StudentsController(IStudentService studentService)
         {
             _studentService = studentService;
         }
@@ -88,19 +88,24 @@ namespace School.Api.Controllers
         =========================
             Objetivo:
             - Receber os dados de um novo aluno via JSON (pelo CreateStudentDto)
-            - Criar um novo registro no banco
-            - Retornar os dados do aluno criado com status HTTP 201 (Created) (usando o StudentResponseDto)
+            - Invocar o StudentService.CreateAsync para criar o aluno no banco
+            - Retornar o resultado da criação, incluindo os dados do aluno criado, ou um erro se o email já existir.
+            - Se a criação for bem-sucedida, retorna HTTP 201 (Created) com os dados do aluno criado (usando o StudentResponseDto)
         */
         [HttpPost]
         public async Task<IActionResult> CreateStudent(CreateStudentDto dto)
-        {
-            var createdStudent = await _studentService.CreateAsync(dto);
+        {           
+            //result recebe o resultado do método CreateAsync do StudentService, que é do tipo Result<StudentResponseDto>.
+            var result = await _studentService.CreateAsync(dto);
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = createdStudent.Id },
-                createdStudent
-            );
+            // StudentService filtra para saber se já existe um aluno com o mesmo email. Se existir, ele retorna 
+            // um Result<StudentResponseDto> com Success = false e uma mensagem de erro, quais são armazenados na variável result.
+            if (!result.Success)
+                return Conflict(result);
+                
+            return CreatedAtAction(nameof(GetById),
+                new { id = result.Data!.Id },
+                result);
         }
 
         /* 

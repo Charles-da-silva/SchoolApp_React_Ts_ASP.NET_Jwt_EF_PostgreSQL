@@ -1,4 +1,4 @@
-using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace School.Api.Domain.Entities
 {
@@ -11,6 +11,15 @@ namespace School.Api.Domain.Entities
         Neste caso aqui, esta Entity (Student.cs) representa um aluno da escola.
         Esta classe será mapeada para a tabela Students no banco de dados.
     */
+
+    [Index(nameof(Email), IsUnique = true)]
+    /* O que isso faz?
+    Diz ao EF Core que Email deve ser único no banco.
+    Quando gerar migration → cria UNIQUE INDEX no banco
+    Agora o banco garante integridade de não existir dois Alunos com o mesmo email.
+    Já havíamos inserido um controle de regra de negódio no StudentService.cs (metódo CreateAsync), 
+    mas o índice no banco é uma camada adicional de segurança. */
+
     public class Student
     {
         /// Identificador único do aluno.

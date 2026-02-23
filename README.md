@@ -120,28 +120,28 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
 
    Essa estrutura permite:
 
-      - Maior testabilidade
-      - Melhor manutenção
-      - Desacoplamento entre camadas
-      - Evolução futura do sistema sem impacto estrutural
+   - Maior testabilidade
+   - Melhor manutenção
+   - Desacoplamento entre camadas
+   - Evolução futura do sistema sem impacto estrutural
 <br>
 
 🎯 Próximos Passos
 
    🔹 Curto Prazo (Evolução Arquitetural)
 
-      - Implementar tratamento global de exceções (Exception Middleware)
-      - Criar exceções personalizadas para regras de negócio
-      - Implementar validação de regra de negócio (ex: email único)
-      - Criar índice único no banco para garantir integridade de dados
-      - Padronizar respostas da API (Response Pattern)
+   - Implementar tratamento global de exceções (Exception Middleware)
+   - Criar exceções personalizadas para regras de negócio
+   - Implementar validação de regra de negócio (ex: email único)
+   - Criar índice único no banco para garantir integridade de dados
+   - Padronizar respostas da API (Response Pattern)
 
    🔹 Médio Prazo (Crescimento do Sistema)
 
-      - Implementar autenticação e autorização com JWT
-      - Criar entidade de Responsáveis (Parents/Guardians)
-      - Criar entidade de Funcionários
-      - Introduzir logging estruturado
+   - Implementar autenticação e autorização com JWT
+   - Criar entidade de Responsáveis (Parents/Guardians)
+   - Criar entidade de Funcionários
+   - Introduzir logging estruturado
 <br>
 
 ## 🚧 Alguns do problemas enfrentados e como Foram Resolvidos
