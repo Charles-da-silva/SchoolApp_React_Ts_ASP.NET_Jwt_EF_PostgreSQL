@@ -37,7 +37,7 @@ Este projeto possui três objetivos principais:
 | Auth          | JWT                           | Segurança moderna                 |
 | Versionamento | Git + GitHub                  | Histórico e colaboração           |
 
-<br><br>
+<br>
 
 ## 🏫 Funcionalidades Planejadas
 
@@ -77,7 +77,7 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
    - Swagger para documentação e testes
 <br>
 
-✅ O que já foi implementado
+✅ O que já foi realizado
 
    - Criação da solução e estrutura inicial do projeto
    - Configuração do DbContext e conexão com PostgreSQL (rodando em Docker)
@@ -86,33 +86,62 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
    - Geração automática do banco via EF Core
    - Implementação do StudentsController
    - Endpoint GET para listagem de alunos ativos
+   - Endpoint GET por ID
    - Endpoint POST para cadastro de alunos
    - Endpoint PUT para atualizar o cadastro de alunos
-   - Endpoint DELETE para excluir alunos (soft delete)
-   - Implementação de DTOs para entrada e saída de dados, fazendo validações com DataAnnotations 
-   - Correção e padronização do modelo (FullName e DateOfBirth)
+   - Endpoint DELETE para exclusão lógica (soft delete)
+   - Implementação de DTOs para entrada e saída de dados com validações via DataAnnotations
    - Ajuste de inconsistências entre Entity, Migration e Banco
-   - Testes via Swagger funcionando corretamente
+   - Adoção completa de operações assíncronas (ToListAsync, FirstOrDefaultAsync, SaveChangesAsync)
+   - Implementação de Soft Delete utilizando IsActive
+   - Refatoração arquitetural: extração das regras de negócio do Controller para a camada de Service
+   - Criação da interface IStudentService seguindo o princípio da Inversão de Dependência (SOLID)
+   - Implementação da classe StudentService centralizando regras de negócio
+   - Desacoplamento do Controller em relação ao DbContext
+   - Remoção do campo IsActive dos DTOs (tratado como controle interno de domínio)
+   - Testes completos via Swagger com todos os endpoints funcionando corretamente
 <br>
 
 🧱 Arquitetura Atual
 
-   A aplicação segue uma estrutura baseada em:
+   A aplicação segue uma estrutura baseada em camadas:
 
-   - Controllers → Responsáveis pelos endpoints
-   - DTOs → Responsáveis pela comunicação externa
-   - Entities → Representação das tabelas no banco
-   - DbContext → Mapeamento ORM via EF Core
+   - Controllers → Responsáveis apenas pela camada HTTP (entrada e saída)
+   - Services → Responsáveis pelas regras de negócio e casos de uso
+   - DTOs → Contratos de comunicação externa
+   - Entities (Domain) → Representação do domínio e estrutura das tabelas
+   - Infrastructure (DbContext) → Persistência de dados via EF Core
    - Migrations → Controle de versionamento do banco
+<br>
+
+📌 Fluxo atual:
+
+   Controller → Service → DbContext → Banco de Dados
+
+   Essa estrutura permite:
+
+      - Maior testabilidade
+      - Melhor manutenção
+      - Desacoplamento entre camadas
+      - Evolução futura do sistema sem impacto estrutural
 <br>
 
 🎯 Próximos Passos
 
-   - Implementar PUT e DELETE
-   - Adicionar validações
-   - Melhorar tratamento de erros
-   - Evoluir para camadas de Service
-   - Aplicar boas práticas de arquitetura
+   🔹 Curto Prazo (Evolução Arquitetural)
+
+      - Implementar tratamento global de exceções (Exception Middleware)
+      - Criar exceções personalizadas para regras de negócio
+      - Implementar validação de regra de negócio (ex: email único)
+      - Criar índice único no banco para garantir integridade de dados
+      - Padronizar respostas da API (Response Pattern)
+
+   🔹 Médio Prazo (Crescimento do Sistema)
+
+      - Implementar autenticação e autorização com JWT
+      - Criar entidade de Responsáveis (Parents/Guardians)
+      - Criar entidade de Funcionários
+      - Introduzir logging estruturado
 <br>
 
 ## 🚧 Alguns do problemas enfrentados e como Foram Resolvidos

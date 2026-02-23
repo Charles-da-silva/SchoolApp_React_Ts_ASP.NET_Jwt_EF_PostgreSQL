@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 
 // Nosso DbContext
 using School.Api.Infrastructure.Data;
+using School.Api.Application.Services.Interfaces;
+using School.Api.Application.Services;
 
 // Cria o "builder" da aplicação.
 // Ele é responsável por:
@@ -31,6 +33,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Adiciona suporte a Controllers (MVC Web API).
 // Sem isso, o ASP.NET NÃO reconhece classes Controller.
 builder.Services.AddControllers();
+
+/*  Isso diz ao .NET: Quando alguém pedir IStudentService, entregue StudentService.
+    Isso é conhecido como:
+        - Injeção de Dependência (DI) - o Controller depende da abstração (interface) e não da implementação concreta.
+        - Inversão de Controle (IoC) - a classe não cria suas dependências, elas são fornecidas pelo framework.
+        - Isso segue o Dependency Inversion Principle (SOLID) - dependemos de abstrações,
+*/
+builder.Services.AddScoped<IStudentService, StudentService>();
 
 // Registra serviços necessários para o Swagger/OpenAPI.
 // Isso permite documentar e testar a API via navegador.

@@ -11,9 +11,6 @@ namespace School.Api.Application.DTOs.Students
        
         public string Email { get; set; } = string.Empty;
 
-        /// Indica se o aluno está ativo.
-        public bool IsActive { get; set; }
-
         public DateTime DateOfBirth { get; set; }
     }
 }
