@@ -112,9 +112,7 @@ namespace School.Api.Controllers
         =========================
         ENDPOINT: PUT api/students
         =========================
-            Objetivo:
-            - Receber os dados atualizados de um aluno via JSON (pelo UpdateStudentDto)
-            - Atualizar o registro correspondente no banco
+            Objetivo: Receber os dados atualizados de um aluno via JSON (pelo UpdateStudentDto)
         */
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStudent(Guid id, UpdateStudentDto dto)
@@ -126,6 +124,27 @@ namespace School.Api.Controllers
 
             return NoContent();
         }
+
+         /* 
+        =========================
+        ENDPOINT: REACTIVATE api/students
+        =========================
+            Objetivo: Receber o ID de um aluno inativo a ser reativado
+        */        
+        [HttpPatch("{id}/reactivate")]
+        // A diferença entre usar o PUT e o PATCH é que o PUT é usado para atualizar um recurso inteiro, 
+        // enquanto o PATCH é usado para atualizar parcialmente um recurso.
+        // No caso do endpoint de reativação, estamos apenas alterando o status do aluno
+        public async Task<IActionResult> ReactivateStudent(Guid id)
+        {
+            var result = await _studentService.ReactivateAsync(id);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+        
         
         /* 
         =========================

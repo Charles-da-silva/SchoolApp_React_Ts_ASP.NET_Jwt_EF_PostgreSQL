@@ -132,7 +132,7 @@ namespace School.Api.Application.Services
 
                 // Invocamos o método Result<StudentResponseDto>.Fail para retornar um resultado de falha, 
                 // passando a mensagem de erro, os dados do aluno existente (variável existingDto) e indicando se é possível reativar o aluno. 
-                // Isso permite que o Controller trate essa situação de forma adequada, retornando um status HTTP 400 Bad Request com informações úteis para o cliente.
+                // Isso permite que o Controller trate essa situação de forma adequada, retornando um status HTTP 409 Conflict com informações úteis para o cliente.
                 return Result<StudentResponseDto>.Fail(
                     "Já existe um aluno com este email.",
                     existingDto,
@@ -187,6 +187,30 @@ namespace School.Api.Application.Services
             // Salva no banco e retorna true para indicar sucesso
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<Result<StudentResponseDto>> ReactivateAsync(Guid id)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (student == null)
+                return Result<StudentResponseDto>.Fail("Aluno não encontrado.");
+
+            if (student.IsActive)
+                return Result<StudentResponseDto>.Fail("Aluno já está ativo.");
+
+            student.IsActive = true;
+            await _context.SaveChangesAsync();
+
+            var response = new StudentResponseDto
+            {
+                Id = student.Id,
+                FullName = student.FullName,
+                Email = student.Email,
+                DateOfBirth = student.DateOfBirth
+            };
+
+            return Result<StudentResponseDto>.Ok(response);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
