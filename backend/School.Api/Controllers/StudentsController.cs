@@ -23,7 +23,7 @@ namespace School.Api.Controllers
     [Route("api/[controller]")]
 
     // Controller responsável por gerenciar alunos (Students).
-    public class StudentsController : ControllerBase
+    public class StudentsController : BaseController
     {
          // Campo privado para armazenar o DbContext
         private readonly IStudentService _studentService;
@@ -55,11 +55,16 @@ namespace School.Api.Controllers
         ==> IEnumerable<StudentResponseDto>:  Uma coleção de StudentResponseDto, podendo ser lista, array, etc.
         */
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentResponseDto>>> GetStudents()
+        public async Task<IActionResult> GetAll()
         {
-            var students = await _studentService.GetAllAsync();
+            var result = await _studentService.GetAllAsync();
 
-            return Ok(students);
+            if (!result.Success)
+            {
+                return HandleFailure(result);
+            }
+
+            return Ok(result);
         }
         
         /*
@@ -73,13 +78,12 @@ namespace School.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {   
-            var student = await _studentService.GetByIdAsync(id);
+            var result = await _studentService.GetByIdAsync(id);
 
-            if (student == null)
-                return NotFound();
-            
-            // Retorna HTTP 200 (OK) com os dados
-            return Ok(student);
+            if (!result.Success)
+                return HandleFailure(result);
+
+            return Ok(result);
         }
         
         /* 
@@ -101,11 +105,13 @@ namespace School.Api.Controllers
             // StudentService filtra para saber se já existe um aluno com o mesmo email. Se existir, ele retorna 
             // um Result<StudentResponseDto> com Success = false e uma mensagem de erro, quais são armazenados na variável result.
             if (!result.Success)
-                return Conflict(result);
+                return HandleFailure(result); 
                 
-            return CreatedAtAction(nameof(GetById),
+            return CreatedAtAction(
+                nameof(GetById),
                 new { id = result.Data!.Id },
-                result);
+                result
+            );
         }
 
         /* 
@@ -117,12 +123,12 @@ namespace School.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStudent(Guid id, UpdateStudentDto dto)
         {
-            var updated = await _studentService.UpdateAsync(id, dto);
+            var result = await _studentService.UpdateAsync(id, dto);
 
-            if (!updated)
-                return NotFound();
+            if (!result.Success)
+                return HandleFailure(result);
 
-            return NoContent();
+            return NoContent(); // HTTP 204
         }
 
          /* 
@@ -133,16 +139,22 @@ namespace School.Api.Controllers
         */        
         [HttpPatch("{id}/reactivate")]
         // A diferença entre usar o PUT e o PATCH é que o PUT é usado para atualizar um recurso inteiro, 
-        // enquanto o PATCH é usado para atualizar parcialmente um recurso.
-        // No caso do endpoint de reativação, estamos apenas alterando o status do aluno
+        // enquanto o PATCH é usado para atualizar parcialmente um recurso (ex.: o status do aluno)
         public async Task<IActionResult> ReactivateStudent(Guid id)
         {
             var result = await _studentService.ReactivateAsync(id);
 
             if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            {
+                return result.ErrorType switch
+                {
+                    ErrorType.NotFound => NotFound(result), // HTTP 404 (Not Found) indicando que o aluno não existe
+                    ErrorType.Conflict => Conflict(result), // HTTP 409 (Conflict) indicando que o aluno existe mas está inativo, com a possibilidade de reativação
+                    ErrorType.Validation => BadRequest(result), // HTTP 400 (Bad Request) para outros erros
+                    _ => StatusCode(500, result)
+                };
+            }
+            return Ok(result); // Retorna HTTP 200 (OK) com os dados do aluno reativado
         }
         
         
@@ -157,10 +169,10 @@ namespace School.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(Guid id)
         {
-            var deleted = await _studentService.DeleteAsync(id);
+            var result = await _studentService.DeleteAsync(id);
 
-            if (!deleted)
-                return NotFound();
+            if (!result.Success)
+                return HandleFailure(result);
 
             return NoContent();
         }

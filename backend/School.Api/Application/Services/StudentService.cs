@@ -56,7 +56,7 @@ namespace School.Api.Application.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<StudentResponseDto>> GetAllAsync()
+        public async Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync()
         {
             /* _context.Students
                 significa:
@@ -79,16 +79,18 @@ namespace School.Api.Application.Services
                 */
 
             // Select é como um .map - transforma cada entidade Student em um StudentResponseDto
-            return students.Select(s => new StudentResponseDto
+            var response = students.Select(s => new StudentResponseDto
             {
                 Id = s.Id,
                 FullName = s.FullName,
                 Email = s.Email,
                 DateOfBirth = s.DateOfBirth
             });
+
+            return Result<IEnumerable<StudentResponseDto>>.Ok(response);
         }
 
-        public async Task<StudentResponseDto?> GetByIdAsync(Guid id)
+        public async Task<Result<StudentResponseDto>> GetByIdAsync(Guid id)
         {
             /*
                 _context é o SchoolDbContext injetado no service. Representa a conexão com o banco.
@@ -98,24 +100,27 @@ namespace School.Api.Application.Services
                 s => s.Id == id é uma expressão lambda que compara o Id do aluno com o id passado na URL.
                 “Pegue cada Student (apelidado de s) e verifique se o Id dele é igual ao id recebido na URL”
             */
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.IsActive);
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-                return null;
+                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
 
-            return new StudentResponseDto
+            var responde = new StudentResponseDto
             {
                 Id = student.Id,
                 FullName = student.FullName,
                 Email = student.Email,
                 DateOfBirth = student.DateOfBirth
             };
+
+            return Result<StudentResponseDto>.Ok(responde);
         }
 
         /// Cria um novo aluno.
         public async Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto)
         {   
-            // Verifica se já existe aluno com mesmo email
+            // Verifica se já existe aluno com mesmo email no banco. 
+            // Se não existir o banco responde com null
             var existingStudent = await _context.Students
                 .FirstOrDefaultAsync(s => s.Email == dto.Email);
 
@@ -135,6 +140,7 @@ namespace School.Api.Application.Services
                 // Isso permite que o Controller trate essa situação de forma adequada, retornando um status HTTP 409 Conflict com informações úteis para o cliente.
                 return Result<StudentResponseDto>.Fail(
                     "Já existe um aluno com este email.",
+                    ErrorType.Conflict,
                     existingDto,
                     canReactivate: !existingStudent.IsActive
                 );
@@ -170,14 +176,16 @@ namespace School.Api.Application.Services
         }
 
         // Tipo de retorno bool para indicar sucesso ou falha da operação, podendo ser tratado no Controller para retornar o status HTTP adequado (200, 404, etc.)
-        public async Task<bool> UpdateAsync(Guid id, UpdateStudentDto dto)
+        public async Task<Result<StudentResponseDto>> UpdateAsync(Guid id, UpdateStudentDto dto)
         {   
-            // Buscar aluno no banco filtrando por ID e apenas ativos (Soft Delete)
+            // Buscar aluno no banco filtrando por ID e apenas ativos (!Soft Delete)
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.IsActive);
 
             // Se não encontrar o aluno, retorna false para indicar que a atualização falhou (pode ser tratado no Controller para retornar NotFound 404)
             if (student == null)
-                return false;
+            {
+                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
+            }
 
             // Se encontrou o aluno pelo ID e está ativo, a variável studente não será null, logo o método não executou o return acima, passando para o passo abaixo onde atualiza os campos do student, usando as informações recebidas no DTO de atualização (UpdateStudentDto).
             student.FullName = dto.FullName;
@@ -186,7 +194,16 @@ namespace School.Api.Application.Services
 
             // Salva no banco e retorna true para indicar sucesso
             await _context.SaveChangesAsync();
-            return true;
+
+            var response = new StudentResponseDto
+            {
+                Id = student.Id,
+                FullName = student.FullName,
+                Email = student.Email,
+                DateOfBirth = student.DateOfBirth
+            };
+
+            return Result<StudentResponseDto>.Ok(response);
         }
 
         public async Task<Result<StudentResponseDto>> ReactivateAsync(Guid id)
@@ -194,10 +211,10 @@ namespace School.Api.Application.Services
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-                return Result<StudentResponseDto>.Fail("Aluno não encontrado.");
+                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
 
             if (student.IsActive)
-                return Result<StudentResponseDto>.Fail("Aluno já está ativo.");
+                return Result<StudentResponseDto>.Fail("Aluno já está ativo.", ErrorType.Conflict);
 
             student.IsActive = true;
             await _context.SaveChangesAsync();
@@ -213,18 +230,34 @@ namespace School.Api.Application.Services
             return Result<StudentResponseDto>.Ok(response);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<Result<bool>> DeleteAsync(Guid id)
         {
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.IsActive);
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-                return false;
+            {
+                return Result<bool>.Fail(
+                    "Aluno não encontrado.",
+                    ErrorType.NotFound
+                );
+            }
+
+            if (!student.IsActive)
+            {
+                return Result<bool>.Fail(
+                    "Aluno já está inativo.",
+                    ErrorType.Conflict
+                );
+            }
 
             // Soft Delete: Em vez de remover o registro, marcamos como inativo
             student.IsActive = false;
 
             await _context.SaveChangesAsync();
-            return true;
+
+            return Result<bool>.Ok(true);
+
+            
         }
     }
 }

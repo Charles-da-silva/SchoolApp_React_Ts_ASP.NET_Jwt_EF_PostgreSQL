@@ -15,6 +15,8 @@ namespace School.Api.Application.Common
 
         public string? Message { get; private set; }
 
+        public ErrorType ErrorType { get; private set; }
+
         public T? Data { get; private set; }
 
         public bool CanReactivate { get; private set; }
@@ -30,12 +32,17 @@ namespace School.Api.Application.Common
             };
         }
 
-        public static Result<T> Fail(string message, T? data = default, bool canReactivate = false)
+        public static Result<T> Fail(
+            string message, 
+            ErrorType errorType,
+            T? data = default, 
+            bool canReactivate = false)
         {
             return new Result<T>
             {
                 Success = false,
                 Message = message,
+                ErrorType = errorType,
                 Data = data,
                 CanReactivate = canReactivate
             };
