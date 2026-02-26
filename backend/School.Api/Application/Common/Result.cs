@@ -19,8 +19,6 @@ namespace School.Api.Application.Common
 
         public T? Data { get; private set; }
 
-        public bool CanReactivate { get; private set; }
-
         private Result() { }
 
         public static Result<T> Ok(T data)
@@ -35,16 +33,14 @@ namespace School.Api.Application.Common
         public static Result<T> Fail(
             string message, 
             ErrorType errorType,
-            T? data = default, 
-            bool canReactivate = false)
+            T? data = default)
         {
             return new Result<T>
             {
                 Success = false,
                 Message = message,
                 ErrorType = errorType,
-                Data = data,
-                CanReactivate = canReactivate
+                Data = data
             };
         }
     }

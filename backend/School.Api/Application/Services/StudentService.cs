@@ -84,7 +84,8 @@ namespace School.Api.Application.Services
                 Id = s.Id,
                 FullName = s.FullName,
                 Email = s.Email,
-                DateOfBirth = s.DateOfBirth
+                DateOfBirth = s.DateOfBirth,
+                IsActive = s.IsActive
             });
 
             return Result<IEnumerable<StudentResponseDto>>.Ok(response);
@@ -110,7 +111,8 @@ namespace School.Api.Application.Services
                 Id = student.Id,
                 FullName = student.FullName,
                 Email = student.Email,
-                DateOfBirth = student.DateOfBirth
+                DateOfBirth = student.DateOfBirth,
+                IsActive = student.IsActive
             };
 
             return Result<StudentResponseDto>.Ok(responde);
@@ -141,8 +143,7 @@ namespace School.Api.Application.Services
                 return Result<StudentResponseDto>.Fail(
                     "Já existe um aluno com este email.",
                     ErrorType.Conflict,
-                    existingDto,
-                    canReactivate: !existingStudent.IsActive
+                    existingDto
                 );
             }
 
@@ -178,16 +179,33 @@ namespace School.Api.Application.Services
         // Tipo de retorno bool para indicar sucesso ou falha da operação, podendo ser tratado no Controller para retornar o status HTTP adequado (200, 404, etc.)
         public async Task<Result<StudentResponseDto>> UpdateAsync(Guid id, UpdateStudentDto dto)
         {   
-            // Buscar aluno no banco filtrando por ID e apenas ativos (!Soft Delete)
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.IsActive);
+            // Buscar aluno no banco filtrando por ID
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
-            // Se não encontrar o aluno, retorna false para indicar que a atualização falhou (pode ser tratado no Controller para retornar NotFound 404)
+            // Se não encontrar o aluno, retorna null
             if (student == null)
             {
-                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
+                return Result<StudentResponseDto>.Fail("Aluno não existe.", ErrorType.NotFound);
             }
 
-            // Se encontrou o aluno pelo ID e está ativo, a variável studente não será null, logo o método não executou o return acima, passando para o passo abaixo onde atualiza os campos do student, usando as informações recebidas no DTO de atualização (UpdateStudentDto).
+            if (student.IsActive == false)
+            {
+                return Result<StudentResponseDto>.Fail("Aluno está inativo. Reative para atualizar.", ErrorType.Conflict);
+            }
+
+            if (student.Email != dto.Email)
+            {
+                // Verificar se o novo email já existe para outro aluno
+                var emailExists = await _context.Students.AnyAsync(s => s.Email == dto.Email && s.Id != id);
+
+                if (emailExists)
+                {
+                    return Result<StudentResponseDto>.Fail("Já existe outro aluno com este email.", ErrorType.Conflict);
+                }
+            }
+
+            // Se encontrou o aluno pelo ID e está ativo, a variável studente não será null, logo o método não executou o return acima, 
+            // passando para o passo abaixo onde atualiza os campos do student, usando as informações recebidas no DTO de atualização (UpdateStudentDto).
             student.FullName = dto.FullName;
             student.Email = dto.Email;
             student.DateOfBirth = dto.DateOfBirth;
@@ -200,7 +218,8 @@ namespace School.Api.Application.Services
                 Id = student.Id,
                 FullName = student.FullName,
                 Email = student.Email,
-                DateOfBirth = student.DateOfBirth
+                DateOfBirth = student.DateOfBirth,
+                IsActive = student.IsActive
             };
 
             return Result<StudentResponseDto>.Ok(response);
