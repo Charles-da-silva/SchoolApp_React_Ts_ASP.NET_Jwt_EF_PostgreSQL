@@ -44,5 +44,8 @@ namespace School.Api.Domain.Entities
         /// Data de criação do registro.
         /// Boa prática para auditoria.
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        /// Data de desativação do registro.
+        public DateTime? DeactivatedAt { get; set; }
     }
 }

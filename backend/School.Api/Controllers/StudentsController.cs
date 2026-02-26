@@ -131,6 +131,25 @@ namespace School.Api.Controllers
             return NoContent(); // HTTP 204
         }
 
+        /* 
+        =========================
+        ENDPOINT: SOFTDELETE api/students (desativar)
+        =========================
+            Objetivo:
+            - Receber o ID de um aluno a ser desativado
+            - Marcar o registro como inativo (Soft Delete)
+        */
+        [HttpDelete("{id}/deactivate")]
+        public async Task<IActionResult> DeactivateStudent(Guid id)
+        {
+            var result = await _studentService.DeactivateAsync(id);
+
+            if (!result.Success)
+                return HandleFailure(result);
+
+            return NoContent();
+        }
+
          /* 
         =========================
         ENDPOINT: REACTIVATE api/students
@@ -160,13 +179,13 @@ namespace School.Api.Controllers
         
         /* 
         =========================
-        ENDPOINT: DELETE api/students
+        ENDPOINT: DELETE api/students (hard delete)
         =========================
             Objetivo:
             - Receber o ID de um aluno a ser excluído
-            - Marcar o registro como inativo (Soft Delete)
+            - Excluir o registro do banco  (Hard Delete)
         */
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/delete")]
         public async Task<IActionResult> DeleteStudent(Guid id)
         {
             var result = await _studentService.DeleteAsync(id);

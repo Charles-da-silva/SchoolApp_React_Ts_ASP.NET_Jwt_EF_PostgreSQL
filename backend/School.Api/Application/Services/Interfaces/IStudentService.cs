@@ -19,9 +19,11 @@ namespace School.Api.Application.Services.Interfaces
 
         Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto);
 
-        Task<Result<StudentResponseDto>> ReactivateAsync(Guid id);
-
         Task<Result<StudentResponseDto>> UpdateAsync(Guid id, UpdateStudentDto dto);
+
+        Task<Result<bool>> DeactivateAsync(Guid id);
+
+        Task<Result<StudentResponseDto>> ReactivateAsync(Guid id);
 
         Task<Result<bool>> DeleteAsync(Guid id);
     }

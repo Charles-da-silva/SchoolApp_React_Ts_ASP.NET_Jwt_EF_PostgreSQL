@@ -21,6 +21,7 @@ namespace School.Api.Application.Common
 
         private Result() { }
 
+        // Se OK, retorna true com os dados (response DTO)
         public static Result<T> Ok(T data)
         {
             return new Result<T>
@@ -30,10 +31,8 @@ namespace School.Api.Application.Common
             };
         }
 
-        public static Result<T> Fail(
-            string message, 
-            ErrorType errorType,
-            T? data = default)
+        // Se falha, retorna false, mensagem de erro, tipo de erro e dados (response DTO)
+        public static Result<T> Fail(string message, ErrorType errorType, T? data = default)
         {
             return new Result<T>
             {

@@ -225,31 +225,7 @@ namespace School.Api.Application.Services
             return Result<StudentResponseDto>.Ok(response);
         }
 
-        public async Task<Result<StudentResponseDto>> ReactivateAsync(Guid id)
-        {
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
-
-            if (student == null)
-                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
-
-            if (student.IsActive)
-                return Result<StudentResponseDto>.Fail("Aluno já está ativo.", ErrorType.Conflict);
-
-            student.IsActive = true;
-            await _context.SaveChangesAsync();
-
-            var response = new StudentResponseDto
-            {
-                Id = student.Id,
-                FullName = student.FullName,
-                Email = student.Email,
-                DateOfBirth = student.DateOfBirth
-            };
-
-            return Result<StudentResponseDto>.Ok(response);
-        }
-
-        public async Task<Result<bool>> DeleteAsync(Guid id)
+        public async Task<Result<bool>> DeactivateAsync(Guid id)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
@@ -271,12 +247,73 @@ namespace School.Api.Application.Services
 
             // Soft Delete: Em vez de remover o registro, marcamos como inativo
             student.IsActive = false;
+            student.DeactivatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 
-            return Result<bool>.Ok(true);
+            return Result<bool>.Ok(true);        
+        }
 
+        public async Task<Result<StudentResponseDto>> ReactivateAsync(Guid id)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (student == null)
+                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
+
+            if (student.IsActive)
+                return Result<StudentResponseDto>.Fail("Aluno já está ativo.", ErrorType.Conflict);
+
+            student.IsActive = true;
+            student.DeactivatedAt = null;
             
+            await _context.SaveChangesAsync();
+
+            var response = new StudentResponseDto
+            {
+                Id = student.Id,
+                FullName = student.FullName,
+                Email = student.Email,
+                DateOfBirth = student.DateOfBirth,
+                IsActive = student.IsActive
+            };
+
+            return Result<StudentResponseDto>.Ok(response);
+        }
+
+        public async Task<Result<bool>> DeleteAsync(Guid id)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (student == null)
+            {
+                return Result<bool>.Fail(
+                    "Aluno não encontrado.",
+                    ErrorType.NotFound
+                );
+            }
+
+            if (student.DeactivatedAt == null)
+            {
+                return Result<bool>.Fail(
+                    "Aluno ainda está ativo. Antes de deletar, desative o aluno.",
+                    ErrorType.Conflict
+                );
+            }
+
+            if (student.DeactivatedAt > DateTime.UtcNow.AddYears(-5))
+            {
+                return Result<bool>.Fail(
+                    "Aluno foi desativado há menos de 5 anos. Aguarde o período de retenção.",
+                    ErrorType.Conflict
+                );
+            }
+
+            _context.Students.Remove(student);
+
+            await _context.SaveChangesAsync();
+
+            return Result<bool>.Ok(true);            
         }
     }
 }
