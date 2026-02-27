@@ -175,8 +175,7 @@ namespace School.Api.Controllers
             }
             return Ok(result); // Retorna HTTP 200 (OK) com os dados do aluno reativado
         }
-        
-        
+                
         /* 
         =========================
         ENDPOINT: DELETE api/students (hard delete)

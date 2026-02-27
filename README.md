@@ -99,6 +99,8 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
    - Implementação da classe StudentService centralizando regras de negócio
    - Desacoplamento do Controller em relação ao DbContext
    - Remoção do campo IsActive dos DTOs (tratado como controle interno de domínio)
+   - Implementado validação de regra de negócio (ex: email único)
+   - Padronização de respostas da API (Response Pattern)
    - Testes completos via Swagger com todos os endpoints funcionando corretamente
 <br>
 
@@ -132,9 +134,7 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
 
    - Implementar tratamento global de exceções (Exception Middleware)
    - Criar exceções personalizadas para regras de negócio
-   - Implementar validação de regra de negócio (ex: email único)
-   - Criar índice único no banco para garantir integridade de dados
-   - Padronizar respostas da API (Response Pattern)
+   - Criar índice único no banco para garantir integridade de dados   
 
    🔹 Médio Prazo (Crescimento do Sistema)
 
