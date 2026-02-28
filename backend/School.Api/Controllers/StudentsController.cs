@@ -55,17 +55,16 @@ namespace School.Api.Controllers
         ==> IEnumerable<StudentResponseDto>:  Uma coleção de StudentResponseDto, podendo ser lista, array, etc.
         */
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _studentService.GetAllAsync();
+        public async Task<ActionResult<IEnumerable<StudentResponseDto>>> GetStudents(
+        [FromQuery] StudentFilterDto filter)
+    {
+        var result = await _studentService.GetAllAsync(filter);
 
-            if (!result.Success)
-            {
-                return HandleFailure(result);
-            }
+        if (!result.Success)
+            return HandleFailure(result);
 
-            return Ok(result);
-        }
+        return Ok(result.Data);
+    }
         
         /*
         =========================

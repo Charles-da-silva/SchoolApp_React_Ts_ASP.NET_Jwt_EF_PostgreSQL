@@ -56,18 +56,29 @@ namespace School.Api.Application.Services
             _context = context;
         }
 
-        public async Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync()
+        public async Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync(StudentFilterDto filter)
         {
             /* _context.Students
                 significa:
                     - Acessar a tabela Students;
                     - Trabalhar com objetos C#
                     - Sem escrever SQL diretamente */
+            var query = _context.Students.AsQueryable();
+
+            if (filter.IsActive.HasValue)
+                query = query.Where(s => s.IsActive == filter.IsActive.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+                query = query.Where(s => s.FullName.Contains(filter.Name));
+
+            if (!string.IsNullOrWhiteSpace(filter.Email))
+                query = query.Where(s => s.Email.Contains(filter.Email));
+
+            if (filter.CreatedAfter.HasValue)
+                query = query.Where(s => s.CreatedAt >= filter.CreatedAfter.Value);
 
             // Busca apenas alunos ativos (Soft Delete aplicado)
-            var students = await _context.Students
-                .Where(s => s.IsActive)
-                .ToListAsync();
+            var students = await query.ToListAsync();
                 /* 
                     .ToListAsync() - Aqui o EF Core:
                         - Traduz LINQ → SQL

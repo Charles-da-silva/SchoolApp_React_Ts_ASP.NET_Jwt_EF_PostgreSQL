@@ -6,7 +6,7 @@ namespace School.Api.Controllers
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
-        protected IActionResult HandleFailure<T>(Result<T> result)
+        protected ActionResult HandleFailure<T>(Result<T> result)
         {
             return result.ErrorType switch
             {

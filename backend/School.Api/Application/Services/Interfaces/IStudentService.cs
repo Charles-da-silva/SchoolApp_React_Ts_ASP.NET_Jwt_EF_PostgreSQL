@@ -13,7 +13,7 @@ namespace School.Api.Application.Services.Interfaces
     /// - Segue princípio DIP (Dependency Inversion Principle - SOLID)
     public interface IStudentService
     {
-        Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync();
+        Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync(StudentFilterDto filter);
 
         Task<Result<StudentResponseDto>> GetByIdAsync(Guid id);
 
