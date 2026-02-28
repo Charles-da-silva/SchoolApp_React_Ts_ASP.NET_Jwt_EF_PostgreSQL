@@ -57,27 +57,77 @@ namespace School.Api.Application.Services
         }
 
         public async Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync(StudentFilterDto filter)
-        {
-            /* _context.Students
-                significa:
-                    - Acessar a tabela Students;
-                    - Trabalhar com objetos C#
-                    - Sem escrever SQL diretamente */
+        {            
             var query = _context.Students.AsQueryable();
+            /* O que isso significa?
+                _context.Students → tabela Students
+                AsQueryable() → transforma em algo que pode receber filtros dinamicamente
+            Importante:
+                Nada foi executado no banco ainda.
+                Você está apenas montando a consulta */
+            
+            /* Os IFs abaixo verificam se o filtro tem algum valor e, se tiver, 
+            adicionam uma condição à consulta no banco, mas a consulta só é executada quando
+            chamamos o ToListAsync() no final, que é quando o EF Core traduz tudo para SQL 
+            e executa no banco. */
 
+            // Validação: Se MinAge e MaxAge forem enviados, MinAge não pode ser maior que MaxAge
+            if (filter.MinAge.HasValue && 
+                filter.MaxAge.HasValue && 
+                filter.MinAge > filter.MaxAge)
+            {
+                return Result<IEnumerable<StudentResponseDto>>.Fail(
+                    "MinAge não pode ser maior que MaxAge.",
+                    ErrorType.Validation
+                );
+            }
+
+            if (filter.MinAge.HasValue)
+            {
+                var maxBirthDate = DateTime.UtcNow.AddYears(-filter.MinAge.Value);
+                query = query.Where(s => s.DateOfBirth <= maxBirthDate);
+            }
+
+            if (filter.MaxAge.HasValue)
+            {
+                var minBirthDate = DateTime.UtcNow.AddYears(-filter.MaxAge.Value);
+                query = query.Where(s => s.DateOfBirth >= minBirthDate);
+            }
+
+            /* Usamos o HasValue para verificar se o filtro IsActive tem um valor (true ou false). 
+            Se não tiver significa que é null e, nesse caso, não aplicamos o filtro. 
+            Se tiver um valor, aplicamos o filtro para posteriormente realizar a busca no DB. */
+    
             if (filter.IsActive.HasValue)
                 query = query.Where(s => s.IsActive == filter.IsActive.Value);
+            
+            /*Usamos o IsNullOrWhiteSpace em vez do HasValue porque Name é uma string, 
+            e queremos verificar se ela é nula, vazia ou composta apenas por espaços em branco, assim
+            não adicionaremos esse filtro na consulta. Se usássemos apenas o HasValue, ele não funcionaria 
+            corretamente para strings, pois uma string vazia ou composta por espaços em branco ainda seria 
+            considerada um valor válido, o que não é o comportamento desejado para um filtro de pesquisa.
+            
+            Tipos valor (bool, int, DateTime) precisam ser nullable (?) para saber se foram enviados.
+            Strings já são referência, então podem ser null naturalmente.*/
 
+            // "Contains" no EF vira LIKE no comando SQL: WHERE FullName LIKE '%joao%'
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 query = query.Where(s => s.FullName.Contains(filter.Name));
-
+            
             if (!string.IsNullOrWhiteSpace(filter.Email))
                 query = query.Where(s => s.Email.Contains(filter.Email));
 
             if (filter.CreatedAfter.HasValue)
                 query = query.Where(s => s.CreatedAt >= filter.CreatedAfter.Value);
 
-            // Busca apenas alunos ativos (Soft Delete aplicado)
+            /* query.ToListAsync()  ==> Aqui o EF Core:
+                - Junta todos os filtros
+                - Converte LINQ → SQL
+                - Abre conexão
+                - Executa SELECT
+                - Converte linhas em objetos Student
+                - Retorna List<Student>
+            Agora sim o banco foi consultado. */
             var students = await query.ToListAsync();
                 /* 
                     .ToListAsync() - Aqui o EF Core:
@@ -129,7 +179,6 @@ namespace School.Api.Application.Services
             return Result<StudentResponseDto>.Ok(responde);
         }
 
-        /// Cria um novo aluno.
         public async Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto)
         {   
             // Verifica se já existe aluno com mesmo email no banco. 
@@ -187,7 +236,6 @@ namespace School.Api.Application.Services
             return Result<StudentResponseDto>.Ok(response);
         }
 
-        // Tipo de retorno bool para indicar sucesso ou falha da operação, podendo ser tratado no Controller para retornar o status HTTP adequado (200, 404, etc.)
         public async Task<Result<StudentResponseDto>> UpdateAsync(Guid id, UpdateStudentDto dto)
         {   
             // Buscar aluno no banco filtrando por ID

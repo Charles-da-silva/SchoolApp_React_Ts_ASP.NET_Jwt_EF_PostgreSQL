@@ -6,4 +6,6 @@ public class StudentFilterDto
     public string? Name { get; set; }
     public string? Email { get; set; }
     public DateTime? CreatedAfter { get; set; }
+    public int? MinAge { get; set; }
+    public int? MaxAge { get; set; }
 }
