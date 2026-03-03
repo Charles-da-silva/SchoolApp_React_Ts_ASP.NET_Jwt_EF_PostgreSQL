@@ -11,7 +11,7 @@ namespace School.Api.Application.DTOs.Students
        
         public string Email { get; set; } = string.Empty;
 
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         public bool IsActive { get; set; }
     }

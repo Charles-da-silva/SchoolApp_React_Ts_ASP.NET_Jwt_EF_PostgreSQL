@@ -31,7 +31,7 @@ namespace School.Api.Domain.Entities
         public string FullName { get; set; } = string.Empty;
 
         /// Data de nascimento do aluno.
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         /// Email do aluno (pode ser usado futuramente para login).
         public string Email { get; set; } = string.Empty;
@@ -43,9 +43,9 @@ namespace School.Api.Domain.Entities
 
         /// Data de criação do registro.
         /// Boa prática para auditoria.
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
 
         /// Data de desativação do registro.
-        public DateTime? DeactivatedAt { get; set; }
+        public DateOnly? DeactivatedAt { get; set; }
     }
 }

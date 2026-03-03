@@ -84,20 +84,34 @@ namespace School.Api.Application.Services
 
             if (filter.MinAge.HasValue)
             {
-                var maxBirthDate = DateTime.UtcNow.AddYears(-filter.MinAge.Value);
+                var maxBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-filter.MinAge.Value));
                 query = query.Where(s => s.DateOfBirth <= maxBirthDate);
+                /* Aqui estamos calculando a idade mínima, por exemplo, 5 anos.
+                Estamos trabalhando com datas, pois o banco tem a data de nascimento, não a idade.
+                Então, para filtrar por idade, precisamos converter a idade em uma data de nascimento 
+                máxima, qual está sendo calculada com DateTime.UtcNow.AddYears(-filter.MinAge.Value).
+                Se quisermos filtrar por alunos com idade mínima de 5 anos, a data de nascimento deve 
+                ser menor ou igual a 5 anos atrás, ou seja, DataNascimento <= hoje - 5 anos.
+                
+                A observação é que estamos usando o DateOnly, pois DateTime traz horas além da data
+                e na conversão para pt-br no Front (UTC para horário local) dependendo do horário do 
+                registro de nascimento, estava sendo exibido um dia a menos*/
             }
 
             if (filter.MaxAge.HasValue)
             {
-                var minBirthDate = DateTime.UtcNow.AddYears(-filter.MaxAge.Value);
+                var minBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-filter.MaxAge.Value));
                 query = query.Where(s => s.DateOfBirth >= minBirthDate);
+                /* Aqui estamos calculando a idade máxima, por exemplo, 10 anos.
+                A lógica é semelhante ao filtro de idade mínima, mas invertida. Para filtrar por alunos
+                com idade máxima de 10 anos, a data de nascimento deve ser maior ou igual a 10 anos atrás, 
+                ou seja, DataNascimento >= hoje - 10 anos.
+                */
             }
 
             /* Usamos o HasValue para verificar se o filtro IsActive tem um valor (true ou false). 
             Se não tiver significa que é null e, nesse caso, não aplicamos o filtro. 
             Se tiver um valor, aplicamos o filtro para posteriormente realizar a busca no DB. */
-    
             if (filter.IsActive.HasValue)
                 query = query.Where(s => s.IsActive == filter.IsActive.Value);
             
@@ -216,7 +230,7 @@ namespace School.Api.Application.Services
                 Email = dto.Email,             // Vem do DTO
                 DateOfBirth = dto.DateOfBirth, // Vem do DTO
                 IsActive = true,               // Regra de negócio
-                CreatedAt = DateTime.UtcNow    // Backend controla
+                CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)    // Backend controla
             };
 
             // Salvar no banco
@@ -306,7 +320,7 @@ namespace School.Api.Application.Services
 
             // Soft Delete: Em vez de remover o registro, marcamos como inativo
             student.IsActive = false;
-            student.DeactivatedAt = DateTime.UtcNow;
+            student.DeactivatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
 
             await _context.SaveChangesAsync();
 
@@ -360,7 +374,7 @@ namespace School.Api.Application.Services
                 );
             }
 
-            if (student.DeactivatedAt > DateTime.UtcNow.AddYears(-5))
+            if (student.DeactivatedAt > DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5)))
             {
                 return Result<bool>.Fail(
                     "Aluno foi desativado há menos de 5 anos. Aguarde o período de retenção.",

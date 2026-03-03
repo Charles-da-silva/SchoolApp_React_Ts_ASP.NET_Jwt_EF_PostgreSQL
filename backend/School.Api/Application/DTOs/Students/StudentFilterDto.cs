@@ -5,7 +5,7 @@ public class StudentFilterDto
     public bool? IsActive { get; set; }
     public string? Name { get; set; }
     public string? Email { get; set; }
-    public DateTime? CreatedAfter { get; set; }
+    public DateOnly? CreatedAfter { get; set; }
     public int? MinAge { get; set; }
     public int? MaxAge { get; set; }
 }

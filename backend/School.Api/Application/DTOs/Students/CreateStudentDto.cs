@@ -19,6 +19,6 @@ namespace School.Api.Application.DTOs.Students
 
         // Data de nascimento do aluno. Obrigatório.
         [Required(ErrorMessage = "A data de nascimento é obrigatória.")]
-        public DateTime DateOfBirth { get; set; } // Valor padrão para evitar nulls
+        public DateOnly DateOfBirth { get; set; } // Valor padrão para evitar nulls
     }
 }

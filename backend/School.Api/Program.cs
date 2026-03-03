@@ -67,6 +67,20 @@ builder.Services.AddDbContext<SchoolDbContext>(options =>
     // GetConnectionString -> Lê o appsettings.json / permite trocar banco sem mudar muitos códigos
 });
 
+// Configuração de CORS (Cross-Origin Resource Sharing)
+// Isso é necessário para permitir que o frontend (que roda em outro domínio/porta) acesse a API 
+// sem bloqueios de segurança do navegador.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 /// ===============================
 /// BUILD DA APLICAÇÃO
 /// ===============================
@@ -96,6 +110,11 @@ if (app.Environment.IsDevelopment())
 // Força redirecionamento HTTP → HTTPS
 // Boa prática de segurança.
 app.UseHttpsRedirection();
+
+// Habilita CORS para a política "AllowFrontend" que definimos acima.
+// Deve ser chamado antes de MapControllers para que as regras de CORS sejam aplicadas 
+// às rotas dos Controllers.
+app.UseCors("AllowFrontend");
 
 // Autorização (vamos usar quando entrar JWT)
 app.UseAuthorization();
