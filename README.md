@@ -57,12 +57,12 @@ Este projeto possui três objetivos principais:
 
 O projeto é desenvolvido por **fases**, como em metodologias ágeis como SCRUM, sempre priorizando entendimento antes do código:
 
-1.  Fundamentos e arquitetura\
-2.  Backend mínimo\
-3.  Persistência de dados\
-4.  Padronização de respostas e regras de negócio\
-5.  Frontend React\
-6.  Autenticação\
+1.  Fundamentos e arquitetura
+2.  Backend mínimo
+3.  Persistência de dados
+4.  Padronização de respostas e regras de negócio
+5.  Frontend React
+6.  Autenticação
 7.  Evolução funcional e deploy
 
 Cada etapa é explicada e versionada neste repositório.
@@ -81,7 +81,7 @@ Cada etapa é explicada e versionada neste repositório.
    - Swagger para documentação e testes
 
    Frontend inicial configurado com React + Vite + TypeScript
-<br>
+<br><br>
 
 ## ✅ O que já foi realizado
 
@@ -100,13 +100,7 @@ Cada etapa é explicada e versionada neste repositório.
 
    - PostgreSQL rodando via Docker
    - Migrations aplicadas com sucesso
-   - Índice único implementado com:
-
-   ``` csharp
-   [Index(nameof(Email), IsUnique = true)]
-   ```
-
-   Garantindo integridade de dados no nível do banco.
+   - Índice único implementado garantindo integridade de dados no nível do banco.
 
 🔹 Gestão de Alunos
 

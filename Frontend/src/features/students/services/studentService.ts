@@ -9,6 +9,7 @@ export const getStudents = async (): Promise<Student[]> => {
   console.log("Resposta completa:", response.data);
 
   return response.data;
-};
   // porque seu backend retorna Result<T>
   // então vem { success, message, errorType, data }
+};
+  
