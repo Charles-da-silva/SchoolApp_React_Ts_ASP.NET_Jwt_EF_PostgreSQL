@@ -1,9 +1,12 @@
 # 🎓 School Management System
 
-Sistema web para gestão básica de uma escola de educação infantil (0 a 5 anos), desenvolvido como **projeto real** aplicado a um cenário verdadeiro, com **foco em arquitetura de software e boas práticas de mercado, com intuito de aprendizado prático e evolução profissional**.
+Sistema web para gestão básica de uma escola de educação infantil (0 a 5 anos), desenvolvido como **projeto real aplicado a um cenário verdadeiro**, com foco em **arquitetura de software e boas práticas de mercado**, com intuito de aprendizado prático e evolução profissional.
 
-Este projeto está sendo inteiramente desenvolvido utilizando o ChatGPT e meus conhecimentos, sem auxílio de nenhuma outra pessoa ou qualquer material que tenha sido usado como referência. O objetivo da criação do projeto foi me desenvolver através de uma situação real de mercado e vivenciar uma experiência qual um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de compreender o problema, buscar, implementar e testar soluções, afim de entregar o melhor produto ao cliente final.
-Assim sendo, o ChatGPT entrou como um tutor, auxiliando na escolha das tecnologias, mas também como um professor, ensinando e orientando durante o desenvolvimento do software e suas funcionalidades. 
+Este projeto está sendo desenvolvido utilizando meus conhecimentos somados ao uso do ChatGPT como ferramenta de apoio técnico e mentoria. O ChatGPT auxilia na geração de código, sugestões arquiteturais e
+explicações técnicas, enquanto eu realizo o estudo, compreensão, validação, testes, ajustes e decisões estruturais do projeto.
+
+O objetivo da criação do projeto é vivenciar uma experiência próxima à realidade de mercado, simulando o cenário onde um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de
+compreender o problema, buscar, implementar, testar e evoluir soluções até entregar o melhor produto possível.
 <br><br>
 
 ## 🎯 Objetivos do Projeto
@@ -18,6 +21,7 @@ Este projeto possui três objetivos principais:
    - Aprender desenvolvimento backend e frontend moderno
    - Entender arquitetura de software aplicada ao mercado
    - Desenvolver APIs, autenticação e persistência de dados
+   - Aplicar princípios SOLID e boas práticas
 
 3. **Comprovação de experiência**
    - Demonstrar evolução contínua no GitHub
@@ -30,9 +34,9 @@ Este projeto possui três objetivos principais:
 
 |    Camada     |          Tecnologia           |         Motivo da escolha         |
 |---------------|-------------------------------|-----------------------------------|
-| Frontend      | React + TypeScript            | Alta demanda no mercado           |
-| Backend       | ASP.Net Core MVC (C#)         | Robusto, padrão de mercado        |
-| ORM           | Entity Framework Core         | Padrão de mercado                 |
+| Frontend      | React + TypeScript (Vite)     | Alta demanda no mercado           |
+| Backend       | ASP.Net Core MVC (C#)         | Robusto e amplamente utilizado    |
+| ORM           | Entity Framework Core         | Padrão consolidado                |
 | Banco         | PostgreSQL em Docker          | Open-source e baixo custo         |
 | Auth          | JWT                           | Segurança moderna                 |
 | Versionamento | Git + GitHub                  | Histórico e colaboração           |
@@ -43,7 +47,7 @@ Este projeto possui três objetivos principais:
 
 - Cadastro e gestão de alunos
 - Cadastro de responsáveis
-- Cadastro e gestão de funcionários (diretor(a), coordenador(a), pegadogo(a), professores, cozinheiro(a), serviços gerais)
+- Cadastro e gestão de funcionários
 - Organização de turmas (relacionado-as com professores e alunos)
 - Controle de acesso por usuário
 - Relatórios
@@ -53,15 +57,15 @@ Este projeto possui três objetivos principais:
 
 O projeto é desenvolvido por **fases**, como em metodologias ágeis como SCRUM, sempre priorizando entendimento antes do código:
 
-1. Fundamentos e arquitetura
-2. Backend mínimo
-3. Persistência de dados
-4. Autenticação
-5. Frontend
-6. Funcionalidades reais
-7. Deploy econômico
+1.  Fundamentos e arquitetura\
+2.  Backend mínimo\
+3.  Persistência de dados\
+4.  Padronização de respostas e regras de negócio\
+5.  Frontend React\
+6.  Autenticação\
+7.  Evolução funcional e deploy
 
-Cada etapa é explicada e versionada neste repositório no GitHub.
+Cada etapa é explicada e versionada neste repositório.
 <br><br>
 
 ## 📈 Status do Projeto
@@ -75,33 +79,61 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
    - Entity Framework Core
    - PostgreSQL (rodando em Docker)
    - Swagger para documentação e testes
+
+   Frontend inicial configurado com React + Vite + TypeScript
 <br>
 
-✅ O que já foi realizado
+## ✅ O que já foi realizado
 
-   - Criação da solução e estrutura inicial do projeto
-   - Configuração do DbContext e conexão com PostgreSQL (rodando em Docker)
-   - Criação da entidade Student
-   - Criação e aplicação da migration inicial (InitialCreate)
-   - Geração automática do banco via EF Core
-   - Implementação do StudentsController
-   - Endpoint GET para listagem de alunos ativos
-   - Endpoint GET por ID
-   - Endpoint POST para cadastro de alunos
-   - Endpoint PUT para atualizar o cadastro de alunos
-   - Endpoint DELETE para exclusão lógica (soft delete)
-   - Implementação de DTOs para entrada e saída de dados com validações via DataAnnotations
-   - Ajuste de inconsistências entre Entity, Migration e Banco
-   - Adoção completa de operações assíncronas (ToListAsync, FirstOrDefaultAsync, SaveChangesAsync)
-   - Implementação de Soft Delete utilizando IsActive
-   - Refatoração arquitetural: extração das regras de negócio do Controller para a camada de Service
-   - Criação da interface IStudentService seguindo o princípio da Inversão de Dependência (SOLID)
-   - Implementação da classe StudentService centralizando regras de negócio
-   - Desacoplamento do Controller em relação ao DbContext
-   - Remoção do campo IsActive dos DTOs (tratado como controle interno de domínio)
-   - Implementado validação de regra de negócio (ex: email único)
-   - Padronização de respostas da API (Response Pattern)
-   - Testes completos via Swagger com todos os endpoints funcionando corretamente
+🔹 Arquitetura
+
+   - Separação em camadas (Controller → Service → Infrastructure)
+   - Extração das regras de negócio para a camada de Service
+   - Implementação da interface `IStudentService`
+   - Aplicação do princípio da Inversão de Dependência (SOLID)
+   - Desacoplamento do Controller do DbContext
+   - Implementação de `BaseController` para padronização de respostas
+   - Implementação de `ErrorType` e `Result<T>` para controle padronizado
+      de erros e retornos
+
+🔹 Banco de Dados
+
+   - PostgreSQL rodando via Docker
+   - Migrations aplicadas com sucesso
+   - Índice único implementado com:
+
+   ``` csharp
+   [Index(nameof(Email), IsUnique = true)]
+   ```
+
+   Garantindo integridade de dados no nível do banco.
+
+🔹 Gestão de Alunos
+
+   - GET All com filtros avançados via `StudentFilterDTO`:
+      - Idade mínima
+      - Idade máxima
+      - Nome
+      - Email
+      - Apenas ativos
+      - Data de cadastro
+   - GET por ID
+   - POST (criação)
+   - PUT (atualização)
+   - `DeactivateAsync()` → Soft Delete
+   - `DeleteAsync()` → Hard Delete
+   - Validação de email único
+   - DTOs com validações via DataAnnotations
+   - Operações 100% assíncronas
+
+🔹 Frontend
+
+   - Inicialização do projeto com React + Vite + TypeScript
+   - Estrutura base da aplicação
+   - Criação de serviços para consumo da API
+   - Definição de tipos TypeScript para Student
+   - Integração com backend validada
+   - Testes realizados via Swagger e aplicação React com sucesso
 <br>
 
 🧱 Arquitetura Atual
@@ -130,18 +162,18 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
 
 🎯 Próximos Passos
 
-   🔹 Curto Prazo (Evolução Arquitetural)
+   🔹 Curto Prazo
 
-   - Implementar tratamento global de exceções (Exception Middleware)
-   - Criar exceções personalizadas para regras de negócio
-   - Criar índice único no banco para garantir integridade de dados   
+   - Middleware global de exceções
+   - Exceções personalizadas de domínio
+   - Logging estruturado   
 
    🔹 Médio Prazo (Crescimento do Sistema)
 
-   - Implementar autenticação e autorização com JWT
-   - Criar entidade de Responsáveis (Parents/Guardians)
-   - Criar entidade de Funcionários
-   - Introduzir logging estruturado
+   - Autenticação e autorização com JWT
+   - Cadastro de responsáveis
+   - Cadastro de funcionários
+   - Controle de acesso por perfil
 <br>
 
 ## 🚧 Alguns do problemas enfrentados e como Foram Resolvidos
@@ -166,7 +198,7 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
    - APIs modernas devem ser 100% assíncronas para suportar alta concorrência.
 <br>
 
-🔴 Problema: Exclusão física de registros (Delete Hard)
+🔴 Problema: Só existia Endpoint para exclusão física de registros (Delete Hard)
 
    - Remover registros permanentemente pode causar:
    - Perda irreversível de dados
@@ -225,3 +257,23 @@ Cada etapa é explicada e versionada neste repositório no GitHub.
 💡 Aprendizado
 
    - Semântica HTTP correta melhora interoperabilidade e profissionalismo, seguindo os padrões REST.
+<br>
+
+🔴 Problema com DateTime e Fuso Horário
+
+   Inicialmente os campos `DateOfBirth`, `CreatedAt` e `DeactivatedAt`
+   utilizavam `DateTime`.
+
+   Ao consumir no frontend, ocorria conversão automática de UTC para horário local (pt-BR), causando em alguns casos a exibição de um dia a menos, dependendo do horário armazenado.
+
+✅ Solução 
+
+   - Alteração dos campos para o tipo `DateOnly`
+   - Ajuste nas Entities e Services
+   - Correção da serialização para evitar problemas de fuso horário
+
+💡 Aprendizado:
+
+   - Nem sempre `DateTime` é a melhor escolha.
+   - Problemas de timezone são comuns em aplicações reais.
+   - Modelagem correta de dados evita bugs sutis no frontend.
