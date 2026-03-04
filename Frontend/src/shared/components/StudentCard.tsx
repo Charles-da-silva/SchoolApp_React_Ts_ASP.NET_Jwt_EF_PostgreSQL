@@ -9,15 +9,20 @@ adicionar botão, mudar cor, etc... tudo isso é responsabilidade do card.
 // Isso garante tipagem forte (TypeScript protege contra erros)
 import type { Student } from "../../features/students/types/Student";
 
-// Criamos um tipo para as propriedades (props) do componente
-// Props são dados que um componente recebe
+import { formatDateToPtBr } from "../utils/dateUtil";
+
+// Aqui estamos dizendo:
+// Esse componente recebe DUAS props:
+// 1) student → dados do aluno
+// 2) onDeactivate → função que será executada ao clicar
 type StudentCardProps = {
   student: Student;
+  onDeactivate: (id: string) => void;
 };
 
-// Componente funcional
-// Ele recebe props e retorna JSX (HTML do React)
-export function StudentCard({ student }: StudentCardProps) {
+// Aqui estamos "desestruturando" as props
+// Isso significa que estamos pegando student e onDeactivate diretamente
+export function StudentCard({ student, onDeactivate }: StudentCardProps) {
   return (
     <div
       style={{
@@ -36,13 +41,24 @@ export function StudentCard({ student }: StudentCardProps) {
       </p>
 
       <p>
-        <strong>Data de Nascimento:</strong> {student.dateOfBirth}
-      </p>
-
-      <p>
         <strong>Status:</strong>{" "}
         {student.isActive ? "Ativo" : "Inativo"}
       </p>
+
+      <p>
+        <strong>Data de Nascimento:</strong> {formatDateToPtBr(student.dateOfBirth)}
+      </p>
+
+      <button
+        onClick={() => onDeactivate(student.id)}
+        style={{
+          marginTop: "10px",
+          padding: "5px 10px",
+          cursor: "pointer",
+        }}
+      >
+        Desativar
+      </button>
     </div>
   );
 }

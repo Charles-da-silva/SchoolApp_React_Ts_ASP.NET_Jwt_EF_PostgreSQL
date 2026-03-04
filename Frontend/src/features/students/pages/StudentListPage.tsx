@@ -40,14 +40,6 @@ export function StudentListPage() {
     fetchStudents();
   }, []);
 
-  /* A função abaixo foi criada porque mesmo o backend enviando a data no formato correto, o frontend 
-    estava exibindo a data de forma errada (1 dia a menos), quando usando a função new Date(), então
-    essa função foi criada para tratar a data como string e não ter problemas com fuso horário. */
-  const formatDate = (date: string) => {
-      const [year, month, day] = date.split("-");
-      return `${day}/${month}/${year}`;
-  };
-
   // Tratamento de loading
   if (loading) {
     return <p>Carregando alunos...</p>;
@@ -58,14 +50,41 @@ export function StudentListPage() {
     return <p>Nenhum aluno encontrado.</p>;
   }
 
+  // Função responsável por lidar com a desativação
+  // Ela pertence à Page porque é comportamento da tela
+  async function handleDeactivate(id: string) {
+    try {
+      console.log("Desativando aluno com id:", id);
+
+      // Aqui futuramente chamaremos o backend
+      // await deactivateStudent(id);
+
+      // Atualizamos o estado local para refletir a mudança
+      setStudents((prevStudents) =>
+        prevStudents.map((student) =>
+          student.id === id
+            ? { ...student, isActive: false }
+            : student
+        )
+      );
+
+    } catch (error) {
+      console.error("Erro ao desativar aluno:", error);
+    }
+  }
+
   // Renderização principal
   return (
     <div style={{ padding: 40 }}>
       <h1>Lista de Alunos</h1>
 
-      {/* Mapeia a lista de alunos e renderiza um StudentCard para cada um */}
+      {/* Mapeia a lista de alunos e renderiza um StudentCard para cada aluno */}
       {students.map((student) => (
-        <StudentCard key={student.id} student={student} />
+        <StudentCard
+          key={student.id}
+          student={student}
+          onDeactivate={handleDeactivate}
+        />
       ))}
     </div>
   );
