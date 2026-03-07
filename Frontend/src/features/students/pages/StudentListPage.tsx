@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // Importa o tipo Student (contrato de dados vindo do backend)
 import type { Student } from "../types/Student";
 
-import { StudentCard } from "../../../shared/components/StudentCard";
+import { StudentCard } from "../components/StudentCard";
 
 // Importa o serviço responsável por comunicação com API
 // OBS: Página não deve saber detalhes de axios — isso é responsabilidade do service

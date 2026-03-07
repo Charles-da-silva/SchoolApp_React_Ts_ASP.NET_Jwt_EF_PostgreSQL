@@ -7,9 +7,9 @@ adicionar botão, mudar cor, etc... tudo isso é responsabilidade do card.
 
 // Importamos o tipo Student
 // Isso garante tipagem forte (TypeScript protege contra erros)
-import type { Student } from "../../features/students/types/Student";
+import type { Student } from "../types/Student";
 
-import { formatDateToPtBr } from "../utils/dateUtil";
+import { formatDateToPtBr } from "../../../shared/utils/dateUtils";
 
 // Aqui estamos dizendo:
 // Esse componente recebe DUAS props:
