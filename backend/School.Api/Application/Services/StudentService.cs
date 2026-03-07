@@ -21,20 +21,28 @@ namespace School.Api.Application.Services
         Implementação do serviço de alunos.
      
         Aqui ficam as regras de negócio.
-        O Controller NÃO deve acessar o DbContext diretamente.
-        </summary>
+        O Controller NÃO deve acessar o DbContext diretamente.               
         Essa classe é a implementação concreta do contrato definido por IStudentService.
-        Ela é responsável por realizar as operações de CRUD (Create, Read, Update, Delete) para os alunos, utilizando o SchoolDbContext para acessar o banco de dados.
-        Ao seguir a interface IStudentService, garantimos que o Controller possa depender apenas da abstração (interface) e não da implementação concreta, promovendo um design mais flexível e testável.
-        Além disso, ao centralizar a lógica de negócios nesta classe, mantemos o Controller mais limpo e focado apenas em lidar com as requisições HTTP e respostas, enquanto toda a lógica relacionada aos alunos fica encapsulada no serviço.
-        Essa abordagem segue os princípios de SOLID, especialmente o DIP (Dependency Inversion Principle), e facilita a manutenção e evolução do código ao longo do tempo.
+        Ela é responsável por realizar as operações de CRUD (Create, Read, Update, Delete) para os alunos, 
+        utilizando o SchoolDbContext para acessar o banco de dados.
+        Ao seguir a interface IStudentService, garantimos que o Controller possa depender apenas da 
+        abstração (interface) e não da implementação concreta, promovendo um design mais flexível e 
+        testável.
+        Além disso, ao centralizar a lógica de negócios nesta classe, mantemos o Controller mais limpo e 
+        focado apenas em lidar com as requisições HTTP e respostas, enquanto toda a lógica relacionada 
+        aos alunos fica encapsulada no serviço.
+        Essa abordagem segue os princípios de SOLID, especialmente o DIP (Dependency Inversion Principle),
+        e facilita a manutenção e evolução do código ao longo do tempo.
     */
 
-    // Aqui estamos criando a classe StudentService que implementa a interface IStudentService. A classe fica obrigada a implementar todos os métodos definidos na interface, garantindo que o contrato seja cumprido. 
+    // Aqui estamos criando a classe StudentService que implementa a interface IStudentService. 
+    // A classe fica obrigada a implementar todos os métodos definidos na interface, garantindo que o 
+    // contrato seja cumprido. 
     public class StudentService : IStudentService
     {
         /*
-            private - Essa variável só pode ser usada dentro da classe. Boa prática: dependências devem ser privadas.
+            private - Essa variável só pode ser usada dentro da classe. Boa prática: dependências devem 
+            ser privadas.
 
             readonly - Significa que essa variável:
                 Só pode ser atribuída no construtor
@@ -42,7 +50,8 @@ namespace School.Api.Application.Services
                 Isso evita bugs e mantém imutabilidade da dependência.
                 Muito usado em injeção de dependência.
 
-            SchoolDbContext - É o tipo da variável. Ou seja, _context é uma instância do seu DbContext. Ele representa a conexão com o banco e as tabelas.
+            SchoolDbContext - É o tipo da variável. Ou seja, _context é uma instância do seu DbContext. 
+            Ele representa a conexão com o banco e as tabelas.
 
             _context - Nome da variável. Underline é convenção para campos privados.
         */
@@ -50,7 +59,11 @@ namespace School.Api.Application.Services
 
         /// Injeção de dependência do DbContext - DEPENDENCY INJECTION (DI)
        
-        /// O .NET cria automaticamente essa instância porque o SchoolDbContext foi registrado como serviço no Program.cs. O framework cuida de criar e fornecer a instância correta quando o StudentService for criado. Isso é o que chamamos de "Inversão de Controle" - a classe não precisa se preocupar em criar suas dependências, elas são fornecidas pelo framework. Assim, o código fica mais limpo, testável e desacoplado.
+        /* O .NET cria automaticamente essa instância porque o SchoolDbContext foi registrado como 
+        serviço no Program.cs. O framework cuida de criar e fornecer a instância correta quando o 
+        StudentService for criado. Isso é o que chamamos de "Inversão de Controle" - a classe não 
+        precisa se preocupar em criar suas dependências, elas são fornecidas pelo framework. Assim, 
+        o código fica mais limpo, testável e desacoplado. */
         public StudentService(SchoolDbContext context)
         {
             _context = context;
@@ -70,7 +83,7 @@ namespace School.Api.Application.Services
             adicionam uma condição à consulta no banco, mas a consulta só é executada quando
             chamamos o ToListAsync() no final, que é quando o EF Core traduz tudo para SQL 
             e executa no banco. */
-
+ 
             // Validação: Se MinAge e MaxAge forem enviados, MinAge não pode ser maior que MaxAge
             if (filter.MinAge.HasValue && 
                 filter.MaxAge.HasValue && 
@@ -134,6 +147,12 @@ namespace School.Api.Application.Services
             if (filter.CreatedAfter.HasValue)
                 query = query.Where(s => s.CreatedAt >= filter.CreatedAfter.Value);
 
+            if (!string.IsNullOrWhiteSpace(filter.Cpf))
+                query = query.Where(s => s.Cpf.Contains(filter.Cpf));
+            
+            if (!string.IsNullOrWhiteSpace(filter.BirthCertificateNumber))
+                query = query.Where(s => s.BirthCertificateNumber.Contains(filter.BirthCertificateNumber));
+
             /* query.ToListAsync()  ==> Aqui o EF Core:
                 - Junta todos os filtros
                 - Converte LINQ → SQL
@@ -195,27 +214,40 @@ namespace School.Api.Application.Services
 
         public async Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto)
         {   
+            if (string.IsNullOrWhiteSpace(dto.Cpf) &&
+                string.IsNullOrWhiteSpace(dto.BirthCertificateNumber))
+            {
+                return Result<StudentResponseDto>.Fail(
+                    "Aluno deve possuir CPF ou número da certidão.",
+                    ErrorType.Validation);
+            }
+            
             // Verifica se já existe aluno com mesmo email no banco. 
             // Se não existir o banco responde com null
             var existingStudent = await _context.Students
-                .FirstOrDefaultAsync(s => s.Email == dto.Email);
+                .FirstOrDefaultAsync(s => s.Cpf == dto.Cpf || s.BirthCertificateNumber == dto.BirthCertificateNumber);
 
             if (existingStudent != null)
             {
-                // Se já existe um aluno com o mesmo email, criamos uma variável existingDto para retornar os dados do aluno
+                // Se já existe um aluno com o mesmo CPF ou número da certidão, criamos uma variável 
+                // existingDto para retornar os dados do aluno
                 var existingDto = new StudentResponseDto
                 {
                     Id = existingStudent.Id,
                     FullName = existingStudent.FullName,
+                    Cpf = existingStudent.Cpf,
+                    BirthCertificateNumber = existingStudent.BirthCertificateNumber,
                     Email = existingStudent.Email,
                     DateOfBirth = existingStudent.DateOfBirth
                 };
 
-                // Invocamos o método Result<StudentResponseDto>.Fail para retornar um resultado de falha, 
-                // passando a mensagem de erro, os dados do aluno existente (variável existingDto) e indicando se é possível reativar o aluno. 
-                // Isso permite que o Controller trate essa situação de forma adequada, retornando um status HTTP 409 Conflict com informações úteis para o cliente.
+                /*  Invocamos o método Result<StudentResponseDto>.Fail para retornar um resultado de falha, 
+                    passando a mensagem de erro, os dados do aluno existente (variável existingDto) e 
+                    indicando se é possível reativar o aluno. 
+                    Isso permite que o Controller trate essa situação de forma adequada, retornando um 
+                    status HTTP 409 Conflict com informações úteis para o cliente.*/
                 return Result<StudentResponseDto>.Fail(
-                    "Já existe um aluno com este email.",
+                    "Já existe um aluno com este CPF ou número da certidão.",
                     ErrorType.Conflict,
                     existingDto
                 );

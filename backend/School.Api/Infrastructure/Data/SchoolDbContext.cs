@@ -32,5 +32,16 @@ namespace School.Api.Infrastructure.Data
                 - Cada propriedade do Student vira uma coluna da tabela
         */
         public DbSet<Student> Students { get; set; }
+
+        // Aqui é onde configuramos as entidades via Fluent API, sobrescrevendo o método OnModelCreating
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            /* Procura e aplica automaticamente todas as classes de configuração que 
+            implementam IEntityTypeConfiguration.
+            Ex.: ../Infrastructure/Configuration/StudentConfiguration.cs, TeacherConfiguration.cs, etc. */
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(SchoolDbContext).Assembly);
+        }
     }
 }

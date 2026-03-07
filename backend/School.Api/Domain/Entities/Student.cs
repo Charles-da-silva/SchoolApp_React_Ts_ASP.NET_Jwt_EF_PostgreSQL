@@ -33,8 +33,13 @@ namespace School.Api.Domain.Entities
         /// Data de nascimento do aluno.
         public DateOnly DateOfBirth { get; set; }
 
-        /// Email do aluno (pode ser usado futuramente para login).
-        public string Email { get; set; } = string.Empty;
+        /// CPF do aluno.
+        public string? Cpf { get; set; } = string.Empty;
+
+        // Número da certidão de nascimento
+        public string? BirthCertificateNumber { get; set; }
+
+        public string? Email { get; set; } = string.Empty;
 
         /// "IsActive { get; set; } = true" - Indica se o aluno está ativo no sistema.
         /*  Em vez de excluir o aluno do banco, podemos desativar (IsActive = false), fazendo que 

@@ -27,8 +27,14 @@ export function StudentListPage() {
         // Chamada para API através da camada de service
         const data = await getStudents();
 
+        // Console de controle para verificar o que está chegando da API
+        console.log("Tipo de data:", typeof data);
+        console.log("Data:", data);
+        console.log("É array?", Array.isArray(data));
+
         // Atualiza o estado com os dados recebidos
         setStudents(data);
+
       } catch (error) {
         console.error("Erro ao buscar estudantes:", error);
       } finally {

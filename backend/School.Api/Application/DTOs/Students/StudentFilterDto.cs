@@ -8,4 +8,6 @@ public class StudentFilterDto
     public DateOnly? CreatedAfter { get; set; }
     public int? MinAge { get; set; }
     public int? MaxAge { get; set; }
+    public string? Cpf { get; set; } 
+    public string? BirthCertificateNumber { get; set; }
 }
