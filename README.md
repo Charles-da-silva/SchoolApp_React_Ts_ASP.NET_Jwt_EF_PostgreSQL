@@ -87,6 +87,7 @@ Cada etapa é explicada e versionada neste repositório.
 
 🔹 Arquitetura
 
+   - Modelagem de Dados (DER): [Planejamento completo das entidades (Students, Responsibles, Enrollments, Employees, Classes) e seus relacionamentos (1:N e N:N)](Docs/DatabaseSchema_ERD.png)
    - Separação em camadas (Controller → Service → Infrastructure)
    - Extração das regras de negócio para a camada de Service
    - Implementação da interface `IStudentService`
@@ -109,6 +110,7 @@ Cada etapa é explicada e versionada neste repositório.
       - Idade máxima
       - Nome
       - Email
+      - Número de documento
       - Apenas ativos
       - Data de cadastro
    - GET por ID
@@ -158,19 +160,21 @@ Cada etapa é explicada e versionada neste repositório.
 
    🔹 Curto Prazo
 
+   - Criação das demais entidades e suas funcionalidades CRUD
+
+   🔹 Médio Prazo
+
    - Middleware global de exceções
    - Exceções personalizadas de domínio
    - Logging estruturado   
 
-   🔹 Médio Prazo (Crescimento do Sistema)
+   🔹 Longo Prazo
 
    - Autenticação e autorização com JWT
-   - Cadastro de responsáveis
-   - Cadastro de funcionários
    - Controle de acesso por perfil
 <br>
 
-## 🚧 Alguns do problemas enfrentados e como Foram Resolvidos
+## 🚧 Alguns do problemas enfrentados e como foram resolvidos
 <br>
 
 🔴 Problema: Operações síncronas que poderiam causar bloqueio de thread
@@ -271,3 +275,29 @@ Cada etapa é explicada e versionada neste repositório.
    - Nem sempre `DateTime` é a melhor escolha.
    - Problemas de timezone são comuns em aplicações reais.
    - Modelagem correta de dados evita bugs sutis no frontend.
+
+🔴 Problema: Codificação "On-the-Fly" sem Modelagem Prévia (DER)
+
+   No início do projeto, animado e ansioso para colocar a mão na massa e aprender com a prática, foquei na criação do ambiente e no desenvolvimento, criando a primeira entidade Student, seu CRUD completo e execução de testes. Com o decorrer percebi que algumas refatorações começaram a ser necessárias, pois alguns campos como o e-mail (que inclusive já estava até configurado como Unique Index) não fazia sentido nessa entidade, uma vez que os alunos teriam de 0 a 5 anos. Percebi que isso estava me trazendo alguns problemas e riscos, como:
+   
+   - Atributos desnecessários (como o campo Email em crianças de 0 a 5 anos);
+   - Possíveis campos duplicados e desnecessários em outras entidades futuras;
+   - Risco de retrabalho constante e "código macarrônico" no Entity Framework;
+
+✅ Solução
+
+   Interrupção do Desenvolvimento: Pausa estratégica no código para focar na arquitetura de dados.
+
+   Modelagem de Dados (DER): Planejamento completo das entidades (Students, Responsibles, Enrollments, Employees, Classes) e seus relacionamentos (1:N e N:N).
+
+   Normalização: Criação da tabela associativa Student_Responsibles para permitir que um aluno tenha múltiplos responsáveis e vice-versa.
+
+💡 Aprendizado
+
+   Planejamento é mais importante que codificação: Uma hora de modelagem economiza dias de refatoração.
+
+   A arquitetura do banco de dados deve refletir a realidade do mundo real para evitar campos nulos e dados inconsistentes.
+   
+   Entender as regras de negócio (quem é o aluno? quem paga a mensalidade? quem busca na escola?) antes de abrir o Visual Studio é fundamental para a saúde a longo prazo de qualquer projeto de software.
+
+   
