@@ -1,0 +1,62 @@
+flowchart TD
+    %% domains
+    subgraph Backend [Backend/School.Api]
+        direction LR
+        AppSettings["appsettings.json"]
+        Program[Program.cs]
+
+        Controllers[Controllers]
+        Services[Application/Services]
+        DTOs[Application/DTOs]
+        DomainEnt[Domain/Entities]
+        Infrastructure[Infrastructure]
+        Migs[Migrations/*]
+
+        Controllers -->|usa| Services
+        Controllers -->|usa| DTOs
+
+        Services -->|usa| DTOs
+        Services -->|usa| DomainEnt
+        Services -->|usa| InfrastructureDB[Infrastructure/Data/SchoolDbContext.cs]
+
+        InfrastructureDB -->|config| Configs[Infrastructure/Configurations/StudentConfiguration.cs]
+    end
+
+    %% details
+    Controllers --> SC[StudentsController.cs]
+    Controllers --> BC[BaseController.cs]
+
+    Services --> SS[StudentService.cs]
+    Services --> IS[Interfaces/IStudentService.cs]
+
+    DTOs --> StuDTOs[Students/*Dto.cs]
+
+    DomainEnt --> StuEntity[Student.cs]
+
+    InfrastructureDB --> DbContext[SchoolDbContext.cs]
+    Configs --> StuConfig[StudentConfiguration.cs]
+
+    %% dependencies back to root
+    Backend -->|sln reference| SLN[SchoolApp.sln]
+
+    %% Frontend for context
+    subgraph Frontend [Frontend]
+        direction LR
+        PKG[package.json]
+        Vite[vite.config.ts]
+        Src[src]
+        Src --> AppTsx[App.tsx]
+        Src --> Main[main.tsx]
+        Src --> IndexCSS[index.css]
+        Src --> AppDir[app/]
+        AppDir --> Axios[axios/*]
+        AppDir --> Router[router/*]
+        Src --> Features[features/students]
+        Features --> Comp[components/*]
+        Features --> Pages[pages/*]
+        Features --> Serv[services/*]
+        Features --> Types[types/*]
+        Src --> Shared[shared]
+        Shared --> SharedComp[components/*]
+        Shared --> Utils[utils/dateUtils.ts]
+    end

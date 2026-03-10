@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using School.Api.Domain.Enums;
 
 namespace School.Api.Application.DTOs.Students
 {
@@ -12,10 +13,9 @@ namespace School.Api.Application.DTOs.Students
         [MinLength(5, ErrorMessage = "O nome deve ter pelo menos 5 caracteres.")]
         public string FullName { get; set; } = string.Empty;
 
-        // Email do aluno. Obrigatório.
-        [Required(ErrorMessage = "O email é obrigatório.")]
-        [EmailAddress(ErrorMessage = "Formato de email inválido.")]
-        public string Email { get; set; } = string.Empty;
+        public DocumentType DocumentType { get; set; }
+        
+        public string DocumentNumber { get; set; } = string.Empty;
 
         // Data de nascimento do aluno. Obrigatório.
         [Required(ErrorMessage = "A data de nascimento é obrigatória.")]

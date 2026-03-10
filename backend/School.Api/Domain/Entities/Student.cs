@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using School.Api.Domain.Enums;
 
 namespace School.Api.Domain.Entities
 {
@@ -7,24 +8,17 @@ namespace School.Api.Domain.Entities
             - Representa algo do mundo real (Aluno, Professor, Turma…)
             - Vira uma tabela no banco de dados
             - É usada pelo Entity Framework Core para persistência
+            - Contém apenas regras estruturais do domínio
     
         Neste caso aqui, esta Entity (Student.cs) representa um aluno da escola.
         Esta classe será mapeada para a tabela Students no banco de dados.
     */
 
-    [Index(nameof(Email), IsUnique = true)]
-    /* O que isso faz?
-    Diz ao EF Core que Email deve ser único no banco.
-    Quando gerar migration → cria UNIQUE INDEX no banco
-    Agora o banco garante integridade de não existir dois Alunos com o mesmo email.
-    Já havíamos inserido um controle de regra de negódio no StudentService.cs (metódo CreateAsync), 
-    mas o índice no banco é uma camada adicional de segurança. */
-
     public class Student
     {
-        /// Identificador único do aluno.
-        /// Chave primária da tabela.
-        /// "Guid Id" melhor que int em APIs modernas. Evita conflitos. Muito usado em sistemas distribuídos.
+        // Identificador único do aluno.
+        // Chave primária da tabela.
+        // "Guid Id" melhor que int em APIs modernas. Evita conflitos. Muito usado em sistemas distribuídos.
         public Guid Id { get; set; }
         
         /// Nome completo do aluno.
@@ -33,13 +27,14 @@ namespace School.Api.Domain.Entities
         /// Data de nascimento do aluno.
         public DateOnly DateOfBirth { get; set; }
 
-        /// CPF do aluno.
-        public string? Cpf { get; set; } = string.Empty;
+        /// Tipo do documento (CPF ou Certidão)
+        public DocumentType DocumentType { get; set; }
 
-        // Número da certidão de nascimento
-        public string? BirthCertificateNumber { get; set; }
+        /// Número do documento (CPF ou Certidão)
+        public string DocumentNumber { get; set; } = string.Empty;
 
-        public string? Email { get; set; } = string.Empty;
+        /// Ficha médica/anamnese (vem da entidade StudentAnamnesis.cs)
+        public StudentAnamnesis? Anamnesis { get; set; }
 
         /// "IsActive { get; set; } = true" - Indica se o aluno está ativo no sistema.
         /*  Em vez de excluir o aluno do banco, podemos desativar (IsActive = false), fazendo que 

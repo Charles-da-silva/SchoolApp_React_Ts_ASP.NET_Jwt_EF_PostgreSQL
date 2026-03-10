@@ -21,21 +21,18 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
                .IsRequired()
                .HasMaxLength(8);
 
-        builder.Property(s => s.Cpf)
-               .HasMaxLength(11);
+        builder.Property(s => s.DocumentType)
+               .HasMaxLength(11); 
 
-        builder.Property(s => s.BirthCertificateNumber)
-               .HasMaxLength(32);
-        
-        builder.Property(s => s.Email)
-               .HasMaxLength(100);
+        builder.Property(s => s.DocumentNumber)
+              .IsRequired()
+              .HasMaxLength(32);
 
-        // índice único para CPF
-        builder.HasIndex(s => s.Cpf)
+        builder.HasIndex(s => s.DocumentNumber)
                .IsUnique();
 
-        // índice único para certidão
-        builder.HasIndex(s => s.BirthCertificateNumber)
-               .IsUnique();
+        builder.HasOne(s => s.Anamnesis)
+       .WithOne(a => a.Student)
+       .HasForeignKey<StudentAnamnesis>(a => a.StudentId);
     }
 }

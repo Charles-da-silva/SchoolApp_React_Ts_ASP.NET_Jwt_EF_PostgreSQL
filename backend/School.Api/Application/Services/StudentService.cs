@@ -14,6 +14,7 @@ using School.Api.Application.DTOs.Students;
 
 // Importante Exception personalizada para regras de negócio
 using School.Api.Application.Common;
+using School.Api.Domain.Enums;
 
 namespace School.Api.Application.Services
 {
@@ -141,17 +142,11 @@ namespace School.Api.Application.Services
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 query = query.Where(s => s.FullName.Contains(filter.Name));
             
-            if (!string.IsNullOrWhiteSpace(filter.Email))
-                query = query.Where(s => s.Email.Contains(filter.Email));
+            if (!string.IsNullOrWhiteSpace(filter.DocumentNumber))
+                query = query.Where(s => s.DocumentNumber.Contains(filter.DocumentNumber));
 
             if (filter.CreatedAfter.HasValue)
                 query = query.Where(s => s.CreatedAt >= filter.CreatedAfter.Value);
-
-            if (!string.IsNullOrWhiteSpace(filter.Cpf))
-                query = query.Where(s => s.Cpf.Contains(filter.Cpf));
-            
-            if (!string.IsNullOrWhiteSpace(filter.BirthCertificateNumber))
-                query = query.Where(s => s.BirthCertificateNumber.Contains(filter.BirthCertificateNumber));
 
             /* query.ToListAsync()  ==> Aqui o EF Core:
                 - Junta todos os filtros
@@ -177,7 +172,8 @@ namespace School.Api.Application.Services
             {
                 Id = s.Id,
                 FullName = s.FullName,
-                Email = s.Email,
+                DocumentType = s.DocumentType.ToString(),
+                DocumentNumber = s.DocumentNumber,
                 DateOfBirth = s.DateOfBirth,
                 IsActive = s.IsActive
             });
@@ -204,7 +200,8 @@ namespace School.Api.Application.Services
             {
                 Id = student.Id,
                 FullName = student.FullName,
-                Email = student.Email,
+                DocumentType = student.DocumentType.ToString(),
+                DocumentNumber = student.DocumentNumber,
                 DateOfBirth = student.DateOfBirth,
                 IsActive = student.IsActive
             };
@@ -214,18 +211,24 @@ namespace School.Api.Application.Services
 
         public async Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto)
         {   
-            if (string.IsNullOrWhiteSpace(dto.Cpf) &&
-                string.IsNullOrWhiteSpace(dto.BirthCertificateNumber))
+            /*  Enum.IsDefined(...) faz a verificação se o valor enviado no dto.DocumentType é um valor 
+                válido definido no enum DocumentType (CPF ou Certidão). 
+                string.IsNullOrWhiteSpace(...) verifica se o número do documento é nulo, vazio ou composto 
+                apenas por espaços em branco. 
+                Se qualquer uma dessas condições for verdadeira, significa que os dados do documento são 
+                inválidos, e o método retorna um resultado de falha com uma mensagem de erro apropriada. */
+            if (!Enum.IsDefined(typeof(DocumentType), dto.DocumentType) ||
+                string.IsNullOrWhiteSpace(dto.DocumentNumber))
             {
                 return Result<StudentResponseDto>.Fail(
-                    "Aluno deve possuir CPF ou número da certidão.",
+                    "Tipo e número do documento são obrigatórios.",
                     ErrorType.Validation);
             }
             
             // Verifica se já existe aluno com mesmo email no banco. 
             // Se não existir o banco responde com null
             var existingStudent = await _context.Students
-                .FirstOrDefaultAsync(s => s.Cpf == dto.Cpf || s.BirthCertificateNumber == dto.BirthCertificateNumber);
+                .FirstOrDefaultAsync(s => s.DocumentType == dto.DocumentType && s.DocumentNumber == dto.DocumentNumber);
 
             if (existingStudent != null)
             {
@@ -235,9 +238,8 @@ namespace School.Api.Application.Services
                 {
                     Id = existingStudent.Id,
                     FullName = existingStudent.FullName,
-                    Cpf = existingStudent.Cpf,
-                    BirthCertificateNumber = existingStudent.BirthCertificateNumber,
-                    Email = existingStudent.Email,
+                    DocumentType = existingStudent.DocumentType.ToString(),
+                    DocumentNumber = existingStudent.DocumentNumber,
                     DateOfBirth = existingStudent.DateOfBirth
                 };
 
@@ -259,7 +261,8 @@ namespace School.Api.Application.Services
             {
                 Id = Guid.NewGuid(),           // Gera identificador único. Evita dependência do banco para gerar ID. Boa prática para sistemas distribuídos.
                 FullName = dto.FullName,       // Vem do DTO
-                Email = dto.Email,             // Vem do DTO
+                DocumentType = dto.DocumentType, // Vem do DTO
+                DocumentNumber = dto.DocumentNumber, // Vem do DTO
                 DateOfBirth = dto.DateOfBirth, // Vem do DTO
                 IsActive = true,               // Regra de negócio
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)    // Backend controla
@@ -274,7 +277,8 @@ namespace School.Api.Application.Services
             {
                 Id = student.Id,
                 FullName = student.FullName,
-                Email = student.Email,
+                DocumentType = student.DocumentType.ToString(),
+                DocumentNumber = student.DocumentNumber,
                 DateOfBirth = student.DateOfBirth
             };
 
@@ -298,12 +302,12 @@ namespace School.Api.Application.Services
                 return Result<StudentResponseDto>.Fail("Aluno está inativo. Reative para atualizar.", ErrorType.Conflict);
             }
 
-            if (student.Email != dto.Email)
+            if (student.DocumentNumber != dto.DocumentNumber)
             {
-                // Verificar se o novo email já existe para outro aluno
-                var emailExists = await _context.Students.AnyAsync(s => s.Email == dto.Email && s.Id != id);
+                // Verificar se o novo número do documento já existe para outro aluno
+                var documentExists = await _context.Students.AnyAsync(s => s.DocumentNumber == dto.DocumentNumber && s.Id != id);
 
-                if (emailExists)
+                if (documentExists)
                 {
                     return Result<StudentResponseDto>.Fail("Já existe outro aluno com este email.", ErrorType.Conflict);
                 }
@@ -312,7 +316,8 @@ namespace School.Api.Application.Services
             // Se encontrou o aluno pelo ID e está ativo, a variável studente não será null, logo o método não executou o return acima, 
             // passando para o passo abaixo onde atualiza os campos do student, usando as informações recebidas no DTO de atualização (UpdateStudentDto).
             student.FullName = dto.FullName;
-            student.Email = dto.Email;
+            student.DocumentType = dto.DocumentType;
+            student.DocumentNumber = dto.DocumentNumber;
             student.DateOfBirth = dto.DateOfBirth;
 
             // Salva no banco e retorna true para indicar sucesso
@@ -322,7 +327,8 @@ namespace School.Api.Application.Services
             {
                 Id = student.Id,
                 FullName = student.FullName,
-                Email = student.Email,
+                DocumentType = student.DocumentType.ToString(),
+                DocumentNumber = student.DocumentNumber,
                 DateOfBirth = student.DateOfBirth,
                 IsActive = student.IsActive
             };
@@ -336,18 +342,12 @@ namespace School.Api.Application.Services
 
             if (student == null)
             {
-                return Result<bool>.Fail(
-                    "Aluno não encontrado.",
-                    ErrorType.NotFound
-                );
+                return Result<bool>.Fail("Aluno não encontrado.", ErrorType.NotFound);
             }
 
             if (!student.IsActive)
             {
-                return Result<bool>.Fail(
-                    "Aluno já está inativo.",
-                    ErrorType.Conflict
-                );
+                return Result<bool>.Fail("Aluno já está inativo.", ErrorType.Conflict);
             }
 
             // Soft Delete: Em vez de remover o registro, marcamos como inativo
@@ -378,7 +378,8 @@ namespace School.Api.Application.Services
             {
                 Id = student.Id,
                 FullName = student.FullName,
-                Email = student.Email,
+                DocumentType = student.DocumentType.ToString(),
+                DocumentNumber = student.DocumentNumber,
                 DateOfBirth = student.DateOfBirth,
                 IsActive = student.IsActive
             };

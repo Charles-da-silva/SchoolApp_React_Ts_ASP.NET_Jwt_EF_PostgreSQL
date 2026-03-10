@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using School.Api.Domain.Enums;
 
 namespace School.Api.Application.DTOs.Students
 {
@@ -15,14 +16,14 @@ namespace School.Api.Application.DTOs.Students
         // Data de nascimento do aluno. Obrigatório.
         [Required(ErrorMessage = "A data de nascimento é obrigatória.")]
         public DateOnly DateOfBirth { get; set; } // Valor padrão para evitar nulls
-    
-        public string? Cpf { get; set; } = string.Empty;
 
-        // Número da certidão de nascimento
-        public string? BirthCertificateNumber { get; set; }
+        [Required(ErrorMessage = "O tipo de documento é obrigatório.")]
+        public DocumentType DocumentType { get; set; }
 
-        // Email do aluno. 
-        [EmailAddress(ErrorMessage = "Formato de email inválido.")]
-        public string Email { get; set; } = string.Empty;
+        [Required(ErrorMessage = "O número do documento é obrigatório.")]
+        public string DocumentNumber { get; set; } = string.Empty;
+
+        // Ficha médica/anamnese
+        public string Anamnesis { get; set; } = string.Empty;
     }
 }

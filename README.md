@@ -275,6 +275,7 @@ Cada etapa é explicada e versionada neste repositório.
    - Nem sempre `DateTime` é a melhor escolha.
    - Problemas de timezone são comuns em aplicações reais.
    - Modelagem correta de dados evita bugs sutis no frontend.
+   <br>
 
 🔴 Problema: Codificação "On-the-Fly" sem Modelagem Prévia (DER)
 
@@ -288,7 +289,7 @@ Cada etapa é explicada e versionada neste repositório.
 
    Interrupção do Desenvolvimento: Pausa estratégica no código para focar na arquitetura de dados.
 
-   Modelagem de Dados (DER): Planejamento completo das entidades (Students, Responsibles, Enrollments, Employees, Classes) e seus relacionamentos (1:N e N:N).
+   Modelagem de Dados (DER): Planejamento completo das entidades (Student, Responsible, Enrollment, Employee, Class) e seus relacionamentos (1:N e N:N).
 
    Normalização: Criação da tabela associativa Student_Responsibles para permitir que um aluno tenha múltiplos responsáveis e vice-versa.
 
