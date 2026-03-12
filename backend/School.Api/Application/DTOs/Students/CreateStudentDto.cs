@@ -22,8 +22,5 @@ namespace School.Api.Application.DTOs.Students
 
         [Required(ErrorMessage = "O número do documento é obrigatório.")]
         public string DocumentNumber { get; set; } = string.Empty;
-
-        // Ficha médica/anamnese
-        public string Anamnesis { get; set; } = string.Empty;
     }
 }
