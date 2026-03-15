@@ -6,7 +6,7 @@ namespace School.Api.Application.DTOs.Students
     // DTO usado para criar um aluno.
     // DTO (Data Transfer Object) é um padrão para transportar dados entre camadas.
     // É como um formulário controlado, definindo o que o frontend pode enviar para criar um aluno.
-    public class CreateStudentDto
+    public class StudentCreateDto
     {
         // Nome completo do aluno. Obrigatório.
         [Required(ErrorMessage = "O nome é obrigatório.")]

@@ -5,6 +5,8 @@ namespace School.Api.Application.DTOs.Students
     // É como um formulário controlado, definindo o que o frontend pode enviar para criar a ficha médica de um aluno.
     public class StudentAnamnesisResponseDto
     {
+        public Guid Id { get; set; } 
+        
         public Guid StudentId { get; set; } 
      
         public string Content { get; set; } 

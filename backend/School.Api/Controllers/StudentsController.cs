@@ -27,14 +27,19 @@ namespace School.Api.Controllers
     {
          // Campo privado para armazenar o DbContext
         private readonly IStudentService _studentService;
+        private readonly IStudentAnamnesisService _anamnesisService;
         
         /*
             Injeção de Dependência do serviço.       
             O .NET cria o StudentService automaticamente porque registramos no Program.cs. 
         */
-        public StudentsController(IStudentService studentService)
+        public StudentsController(
+            IStudentService studentService,
+            IStudentAnamnesisService anamnesisService
+            )
         {
             _studentService = studentService;
+            _anamnesisService = anamnesisService;
         }
 
         /*
@@ -57,14 +62,14 @@ namespace School.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentResponseDto>>> GetStudents(
         [FromQuery] StudentFilterDto filter)
-    {
+        {
         var result = await _studentService.GetAllAsync(filter);
 
         if (!result.Success)
             return HandleFailure(result);
 
         return Ok(result.Data);
-    }
+        }
         
         /*
         =========================
@@ -96,7 +101,7 @@ namespace School.Api.Controllers
             - Se a criação for bem-sucedida, retorna HTTP 201 (Created) com os dados do aluno criado (usando o StudentResponseDto)
         */
         [HttpPost]
-        public async Task<IActionResult> CreateStudent(CreateStudentDto dto)
+        public async Task<IActionResult> CreateStudent(StudentCreateDto dto)
         {           
             //result recebe o resultado do método CreateAsync do StudentService, que é do tipo Result<StudentResponseDto>.
             var result = await _studentService.CreateAsync(dto);
@@ -120,14 +125,14 @@ namespace School.Api.Controllers
             Objetivo: Receber os dados atualizados de um aluno via JSON (pelo UpdateStudentDto)
         */
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStudent(Guid id, UpdateStudentDto dto)
+        public async Task<IActionResult> UpdateStudent(Guid id, StudentUpdateDto dto)
         {
             var result = await _studentService.UpdateAsync(id, dto);
 
             if (!result.Success)
                 return HandleFailure(result);
 
-            return NoContent(); // HTTP 204
+            return Ok(result.Data); // HTTP 200 + objeto
         }
 
         /* 
@@ -192,6 +197,38 @@ namespace School.Api.Controllers
                 return HandleFailure(result);
 
             return NoContent();
+        }
+
+        /* =========================================================
+        ENDPOINTS DA FICHA DE ANAMNESIS
+        ========================================================== */
+
+        [HttpPost("{studentId}/anamnesis")]
+        public async Task<IActionResult> CreateAnamnesis(
+            Guid studentId,
+            StudentAnamnesisCreateDto dto)
+        {
+            var result = await _anamnesisService.CreateAsync(studentId, dto);
+
+            return HandleResult(result);
+        }
+
+        [HttpGet("{studentId}/anamnesis")]
+        public async Task<IActionResult> GetAnamnesis(Guid studentId)
+        {
+            var result = await _anamnesisService.GetByStudentIdAsync(studentId);
+
+            return HandleResult(result);
+        }
+
+        [HttpPut("{studentId}/anamnesis")]
+        public async Task<IActionResult> UpdateAnamnesis(
+            Guid studentId,
+            StudentAnamnesisUpdateDto dto)
+        {
+            var result = await _anamnesisService.UpdateAsync(studentId, dto);
+
+            return HandleResult(result);
         }
     }
 }

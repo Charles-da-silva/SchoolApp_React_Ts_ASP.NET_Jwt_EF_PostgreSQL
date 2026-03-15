@@ -1,4 +1,4 @@
-// Using para fazer a importação da entidade Student
+
 using School.Api.Application.Common;
 using School.Api.Application.DTOs.Students;
 
@@ -17,14 +17,14 @@ namespace School.Api.Application.Services.Interfaces
 
         Task<Result<StudentResponseDto>> GetByIdAsync(Guid id);
 
-        Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto);
+        Task<Result<StudentResponseDto>> CreateAsync(StudentCreateDto dto);
 
-        Task<Result<StudentResponseDto>> UpdateAsync(Guid id, UpdateStudentDto dto);
+        Task<Result<StudentResponseDto>> UpdateAsync(Guid id, StudentUpdateDto dto);
 
-        Task<Result<bool>> DeactivateAsync(Guid id);
+        Task<Result> DeactivateAsync(Guid id);
 
-        Task<Result<StudentResponseDto>> ReactivateAsync(Guid id);
+        Task<Result> ReactivateAsync(Guid id);
 
-        Task<Result<bool>> DeleteAsync(Guid id);
+        Task<Result> DeleteAsync(Guid id);
     }
 }

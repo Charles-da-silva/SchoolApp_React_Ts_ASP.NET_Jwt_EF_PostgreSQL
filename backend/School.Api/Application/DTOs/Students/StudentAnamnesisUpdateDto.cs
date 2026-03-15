@@ -5,7 +5,7 @@ namespace School.Api.Application.DTOs.Students
     // DTO usado para criar a ficha médica/anamnese de um aluno.
     // DTO (Data Transfer Object) é um padrão para transportar dados entre camadas.
     // É como um formulário controlado, definindo o que o frontend pode enviar para criar a ficha médica de um aluno.
-    public class UpdateStudentAnamnesisDto
+    public class StudentAnamnesisUpdateDto
     {
         // Id do aluno. Obrigatório.
         [Required(ErrorMessage = "O ID do aluno é obrigatório.")]

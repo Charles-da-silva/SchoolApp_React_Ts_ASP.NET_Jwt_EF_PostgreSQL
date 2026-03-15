@@ -209,7 +209,7 @@ namespace School.Api.Application.Services
             return Result<StudentResponseDto>.Ok(responde);
         }
 
-        public async Task<Result<StudentResponseDto>> CreateAsync(CreateStudentDto dto)
+        public async Task<Result<StudentResponseDto>> CreateAsync(StudentCreateDto dto)
         {   
             /*  Enum.IsDefined(...) faz a verificação se o valor enviado no dto.DocumentType é um valor 
                 válido definido no enum DocumentType (CPF ou Certidão). 
@@ -286,7 +286,7 @@ namespace School.Api.Application.Services
             return Result<StudentResponseDto>.Ok(response);
         }
 
-        public async Task<Result<StudentResponseDto>> UpdateAsync(Guid id, UpdateStudentDto dto)
+        public async Task<Result<StudentResponseDto>> UpdateAsync(Guid id, StudentUpdateDto dto)
         {   
             // Buscar aluno no banco filtrando por ID
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
@@ -336,18 +336,18 @@ namespace School.Api.Application.Services
             return Result<StudentResponseDto>.Ok(response);
         }
 
-        public async Task<Result<bool>> DeactivateAsync(Guid id)
+        public async Task<Result> DeactivateAsync(Guid id)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
             {
-                return Result<bool>.Fail("Aluno não encontrado.", ErrorType.NotFound);
+                return Result.Fail("Aluno não encontrado.", ErrorType.NotFound);
             }
 
             if (!student.IsActive)
             {
-                return Result<bool>.Fail("Aluno já está inativo.", ErrorType.Conflict);
+                return Result.Fail("Aluno já está inativo.", ErrorType.Conflict);
             }
 
             // Soft Delete: Em vez de remover o registro, marcamos como inativo
@@ -356,44 +356,34 @@ namespace School.Api.Application.Services
 
             await _context.SaveChangesAsync();
 
-            return Result<bool>.Ok(true);        
+            return Result.Ok("Aluno desativado com sucesso.");       
         }
 
-        public async Task<Result<StudentResponseDto>> ReactivateAsync(Guid id)
+        public async Task<Result> ReactivateAsync(Guid id)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
+                return Result.Fail("Aluno não encontrado.", ErrorType.NotFound);
 
             if (student.IsActive)
-                return Result<StudentResponseDto>.Fail("Aluno já está ativo.", ErrorType.Conflict);
+                return Result.Fail("Aluno já está ativo.", ErrorType.Conflict);
 
             student.IsActive = true;
             student.DeactivatedAt = null;
             
             await _context.SaveChangesAsync();
 
-            var response = new StudentResponseDto
-            {
-                Id = student.Id,
-                FullName = student.FullName,
-                DocumentType = student.DocumentType.ToString(),
-                DocumentNumber = student.DocumentNumber,
-                DateOfBirth = student.DateOfBirth,
-                IsActive = student.IsActive
-            };
-
-            return Result<StudentResponseDto>.Ok(response);
+            return Result.Ok("Aluno reativado com sucesso.");
         }
 
-        public async Task<Result<bool>> DeleteAsync(Guid id)
+        public async Task<Result> DeleteAsync(Guid id)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
             {
-                return Result<bool>.Fail(
+                return Result.Fail(
                     "Aluno não encontrado.",
                     ErrorType.NotFound
                 );
@@ -401,7 +391,7 @@ namespace School.Api.Application.Services
 
             if (student.DeactivatedAt == null)
             {
-                return Result<bool>.Fail(
+                return Result.Fail(
                     "Aluno ainda está ativo. Antes de deletar, desative o aluno.",
                     ErrorType.Conflict
                 );
@@ -409,7 +399,7 @@ namespace School.Api.Application.Services
 
             if (student.DeactivatedAt > DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5)))
             {
-                return Result<bool>.Fail(
+                return Result.Fail(
                     "Aluno foi desativado há menos de 5 anos. Aguarde o período de retenção.",
                     ErrorType.Conflict
                 );
@@ -419,7 +409,7 @@ namespace School.Api.Application.Services
 
             await _context.SaveChangesAsync();
 
-            return Result<bool>.Ok(true);            
+            return Result.Ok("Aluno deletado com sucesso.");            
         }
     }
 }
