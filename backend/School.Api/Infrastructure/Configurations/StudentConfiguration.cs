@@ -14,25 +14,25 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.FullName)
-               .IsRequired()
-               .HasMaxLength(200);
+              .IsRequired()
+              .HasMaxLength(200);
         
         builder.Property(s => s.DateOfBirth)
-               .IsRequired()
-               .HasMaxLength(8);
+              .IsRequired()
+              .HasMaxLength(8);
 
         builder.Property(s => s.DocumentType)
-               .HasMaxLength(11); 
+              .HasMaxLength(11); 
 
         builder.Property(s => s.DocumentNumber)
               .IsRequired()
               .HasMaxLength(32);
 
         builder.HasIndex(s => s.DocumentNumber)
-               .IsUnique();
+              .IsUnique();
 
         builder.HasOne(s => s.Anamnesis)
-       .WithOne(a => a.Student)
-       .HasForeignKey<StudentAnamnesis>(a => a.StudentId);
+              .WithOne(a => a.Student)
+              .HasForeignKey<StudentAnamnesis>(a => a.StudentId);
     }
 }

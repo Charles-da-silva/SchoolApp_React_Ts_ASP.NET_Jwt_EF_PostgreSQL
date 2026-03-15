@@ -69,22 +69,27 @@ namespace School.Api.Application.Services
             StudentAnamnesisCreateDto dto)
         {
             var student = await _context.Students
-            .FirstOrDefaultAsync(s => s.Id == studentId);
+            .AnyAsync(s => s.Id == studentId);
 
-            if (student == null)
-                throw new BusinessException("Aluno não encontrado");
+            if (!await _context.Students.AnyAsync(s => s.Id == studentId))
+                return Result<StudentAnamnesisResponseDto>
+                    .Fail("Aluno não encontrado.", ErrorType.NotFound);
 
             var existingAnamneses = await _context.StudentAnamneses
                 .AnyAsync(a => a.StudentId == studentId);
 
             if (existingAnamneses)
-                throw new BusinessException("Este aluno já possui ficha de anamnese cadastrada.");
+                return Result<StudentAnamnesisResponseDto>
+                    .Fail(
+                        "Este aluno já possui ficha de anamnese cadastrada.",
+                        ErrorType.Conflict);
 
             var newAnamnesis = new StudentAnamnesis
             {
                 Id = Guid.NewGuid(),
                 StudentId = studentId,
-                Content = dto.Content
+                Content = dto.Content,
+                CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
             };
 
             _context.StudentAnamneses.Add(newAnamnesis);

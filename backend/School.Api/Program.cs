@@ -42,6 +42,8 @@ builder.Services.AddControllers();
 */
 builder.Services.AddScoped<IStudentService, StudentService>();
 
+builder.Services.AddScoped<IStudentAnamnesisService, StudentAnamnesisService>();
+
 // Registra serviços necessários para o Swagger/OpenAPI.
 // Isso permite documentar e testar a API via navegador.
 builder.Services.AddEndpointsApiExplorer();
