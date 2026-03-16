@@ -1,13 +1,5 @@
-import axios from "axios";
+import { api } from "../../../shared/services/api";
 import type { Student } from "../types/Student";
-
-/*
-URL base da API.
-
-Em projetos maiores isso vai para:
-"config/api.ts" ou ".env"
-*/
-const API_URL = "http://localhost:5101/api/students";
 
 /*
 Função responsável por buscar estudantes no backend.
@@ -27,15 +19,10 @@ de Students. Quando usamos async, a função NÃO retorna o valor diretamente.
 Ela retorna uma Promise. 
 Uma Promise significa:"Eu vou te entregar esse valor no futuro"
 */
-export const getStudents = async (): Promise<Student[]> => {
+export async function getStudents(): Promise<Student[]> {
 
   // Fazendo a requisição HTTP...
-  const response = await axios.get<Student[]>(API_URL);
-
-  // Console de controle para verificar o que está chegando da API
-  console.log("Resposta completa:", response);
-  console.log("response.data:", response.data);
-  console.log("response.data.data:", response.data);
+  const response = await api.get("/students");
 
   return response.data;
 

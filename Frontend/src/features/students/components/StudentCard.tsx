@@ -12,55 +12,49 @@ import type { Student } from "../types/Student";
 import { formatDateToPtBr } from "../../../shared/utils/dateUtils";
 
 // Aqui estamos dizendo:
-// Esse componente recebe DUAS props:
+// Esse componente recebe a seguinte props:
 // 1) student → dados do aluno
-// 2) onDeactivate → função que será executada ao clicar
-type StudentCardProps = {
+type Props = {
   student: Student;
-  onDeactivate: (id: string) => void;
 };
 
 // Aqui estamos "desestruturando" as props
-// Isso significa que estamos pegando student e onDeactivate diretamente
-export function StudentCard({ student, onDeactivate }: StudentCardProps) {
+// Isso significa que estamos pegando student
+export function StudentCard({ student }: Props) {
   return (
     <div
       style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr 1fr auto",
-        border: "1px solid blue",
-        padding: "10px 20px",
-        marginBottom: "10px",
-        borderRadius: "8px",
+        display: "box",
+        border: "1px solid #e5e7eb",
+        borderRadius: "10px",
+        padding: "16px",
+        background: "#050505",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
       }}
     >
+      <h3 style={{ marginBottom: "8px" }}>
+        {student.fullName}
+      </h3>
+
       <p>
-        <strong>Nome:</strong> {student.fullName}
+        <strong>Documento:</strong>{" "}
+        {student.documentType === "BirthCertificateNumber" ? "Certidão de Nascimento" : "CPF"}
       </p>
 
       <p>
-        <strong>Email:</strong> {student.email}
-      </p>
-
-      <p>
-        <strong>Status:</strong>{" "}
-        {student.isActive ? "Ativo" : "Inativo"}
+        <strong>Número:</strong>{" "}
+        {student.documentNumber}
       </p>
 
       <p>
         <strong>Data de Nascimento:</strong> {formatDateToPtBr(student.dateOfBirth)}
       </p>
 
-      <button
-        onClick={() => onDeactivate(student.id)}
-        style={{
-          marginTop: "10px",
-          padding: "5px 10px",
-          cursor: "pointer",
-        }}
-      >
-        Desativar
-      </button>
+      <p>
+        <strong>Status do aluno:</strong>{" "}
+        {student.isActive ? "Ativo ✅" : "Inativo ❌"}
+      </p>
+
     </div>
   );
 }
