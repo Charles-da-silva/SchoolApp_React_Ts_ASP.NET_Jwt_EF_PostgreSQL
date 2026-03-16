@@ -7,11 +7,11 @@ namespace School.Api.Application.DTOs.Students
         /// Identificador único do aluno.
         public Guid Id { get; set; }
        
-        public string FullName { get; set; }     
+        public string? FullName { get; set; }   
 
         public DateOnly DateOfBirth { get; set; }
 
-        public string DocumentType { get; set; }
+        public string? DocumentType { get; set; }
 
         public string DocumentNumber { get; set; } = string.Empty;
 

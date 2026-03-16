@@ -6,7 +6,7 @@ namespace School.Api.Application.Services.Interfaces
 {
     public interface IStudentAnamnesisService
     {
-        Task<Result<StudentAnamnesisResponseDto?>> GetByStudentIdAsync(
+        Task<Result<StudentAnamnesisResponseDto>> GetByStudentIdAsync(
             Guid studentId);
 
         Task<Result<StudentAnamnesisResponseDto>> CreateAsync(

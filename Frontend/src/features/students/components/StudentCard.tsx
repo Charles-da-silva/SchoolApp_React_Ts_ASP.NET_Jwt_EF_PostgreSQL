@@ -28,7 +28,7 @@ export function StudentCard({ student, onDeactivate }: StudentCardProps) {
       style={{
         display: "grid",
         gridTemplateColumns: "1fr 1fr 1fr 1fr auto",
-        border: "1px solid #ccc",
+        border: "1px solid blue",
         padding: "10px 20px",
         marginBottom: "10px",
         borderRadius: "8px",

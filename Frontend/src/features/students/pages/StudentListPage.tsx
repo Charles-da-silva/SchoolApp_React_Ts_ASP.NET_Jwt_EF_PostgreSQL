@@ -82,7 +82,7 @@ export function StudentListPage() {
   // Renderização principal
   return (
     <div style={{ padding: 40 }}>
-      <h1>Lista de Alunos</h1>
+      <h1 style={{color: "red"}}>Lista de Alunos</h1>
 
       {/* Mapeia a lista de alunos e renderiza um StudentCard para cada aluno */}
       {students.map((student) => (

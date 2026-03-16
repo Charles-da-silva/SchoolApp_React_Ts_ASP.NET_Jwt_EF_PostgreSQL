@@ -52,7 +52,7 @@ namespace School.Api.Application.Services
 
             if (anamnesis == null)
                 return Result<StudentAnamnesisResponseDto>
-                    .Fail("Anamnese não encontrada.", ErrorType.NotFound);
+                    .Fail("Ficha anamnese não encontrada.", ErrorType.NotFound);
 
             var response = new StudentAnamnesisResponseDto
             {
