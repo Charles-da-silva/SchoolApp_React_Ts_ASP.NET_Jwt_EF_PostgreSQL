@@ -12,7 +12,7 @@ Ela conversa apenas com HOOKS.
 */
 
 import { useEffect, useState } from "react";
-import { getStudents } from "../services/studentService";
+import { getStudents } from "../services/StudentService";
 import type { Student } from "../types/Student";
 
 export function useStudents() {

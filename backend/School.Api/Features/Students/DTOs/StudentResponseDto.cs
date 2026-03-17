@@ -16,7 +16,5 @@ namespace School.Api.Application.DTOs.Students
         public string DocumentNumber { get; set; } = string.Empty;
 
         public bool IsActive { get; set; }
-
-
     }
 }

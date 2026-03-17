@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+
 using School.Api.Domain.Enums;
 
 namespace School.Api.Domain.Entities

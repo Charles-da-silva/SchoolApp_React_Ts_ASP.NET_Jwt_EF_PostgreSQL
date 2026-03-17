@@ -1,5 +1,6 @@
 /*
 Page = orquestradora.
+Ela que coordena como os StudendCards serão exibidos
 
 Ela conecta:
 Hook → Components
@@ -43,7 +44,6 @@ export default function StudentsPage() {
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
           gap: "16px",
-          marginTop: "20px",
         }}
       >
         {students.map((student) => (
