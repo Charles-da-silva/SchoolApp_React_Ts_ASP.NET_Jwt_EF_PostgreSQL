@@ -181,7 +181,7 @@ namespace School.Api.Application.Services
             return Result<IEnumerable<StudentResponseDto>>.Ok(response);
         }
 
-        public async Task<Result<StudentResponseDto>> GetByIdAsync(Guid id)
+        public async Task<Result<StudentResponseDetailedDto>> GetByIdAsync(Guid id)
         {
             /*
                 _context é o SchoolDbContext injetado no service. Representa a conexão com o banco.
@@ -191,22 +191,39 @@ namespace School.Api.Application.Services
                 s => s.Id == id é uma expressão lambda que compara o Id do aluno com o id passado na URL.
                 “Pegue cada Student (apelidado de s) e verifique se o Id dele é igual ao id recebido na URL”
             */
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+            var student = await _context.Students
+                .Include(s => s.Anamnesis)
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-                return Result<StudentResponseDto>.Fail("Aluno não encontrado.", ErrorType.NotFound);
+                return Result<StudentResponseDetailedDto>
+                    .Fail("Aluno não encontrado.", ErrorType.NotFound);
 
-            var responde = new StudentResponseDto
+            var response = new StudentResponseDetailedDto
             {
                 Id = student.Id,
                 FullName = student.FullName,
                 DocumentType = student.DocumentType.ToString(),
                 DocumentNumber = student.DocumentNumber,
                 DateOfBirth = student.DateOfBirth,
-                IsActive = student.IsActive
+                IsActive = student.IsActive,
+                CreatedAt = student.CreatedAt,
+                DeactivatedAt = student.DeactivatedAt,
+
+                // Mapping seguro
+                Anamnesis = student.Anamnesis == null
+                    ? null
+                    : new StudentAnamnesisResponseDto
+                    {
+                        Id = student.Anamnesis.Id,
+                        StudentId = id,
+                        Content = student.Anamnesis.Content,
+                        CreatedAt = student.Anamnesis.CreatedAt,
+                        UpdatedAt = student.Anamnesis.UpdatedAt
+                    }
             };
 
-            return Result<StudentResponseDto>.Ok(responde);
+            return Result<StudentResponseDetailedDto>.Ok(response);
         }
 
         public async Task<Result<StudentResponseDto>> CreateAsync(StudentCreateDto dto)

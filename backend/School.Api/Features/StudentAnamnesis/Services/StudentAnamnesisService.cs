@@ -117,6 +117,7 @@ namespace School.Api.Application.Services
                 throw new BusinessException("Ficha de anamnese não encontrada.");
 
             anamnesis.Content = dto.Content;
+            anamnesis.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
 
             await _context.SaveChangesAsync();
 
@@ -124,7 +125,8 @@ namespace School.Api.Application.Services
             {
                 Id = anamnesis.Id,
                 StudentId = anamnesis.StudentId,
-                Content = anamnesis.Content
+                Content = anamnesis.Content,
+                UpdatedAt = anamnesis.UpdatedAt
             };
 
             return Result<StudentAnamnesisResponseDto>.Ok(response);

@@ -9,6 +9,10 @@ namespace School.Api.Application.DTOs.Students
         
         public Guid StudentId { get; set; } 
      
-        public string Content { get; set; } 
+        public string? Content { get; set; } 
+
+        public DateOnly CreatedAt { get; set; }
+
+        public DateOnly? UpdatedAt { get; set; }
     }
 }
