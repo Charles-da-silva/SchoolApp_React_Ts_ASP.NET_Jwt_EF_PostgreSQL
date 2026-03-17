@@ -2,7 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import { MainLayout } from "../../layout/MainLayout";
 import StudentsPage from "../../features/students/pages/StudentPage";
 import StudentDetailsPage from "../../features/students/pages/StudentDetailsPage";
-
+import StudentEditPage from "../../features/students/pages/StudentEditPage";
+import StudentCreatePage from "../../features/students/pages/StudentCreatePage";
 /*
 Router define:
 - rotas
@@ -20,8 +21,12 @@ export const router = createBrowserRouter([
           element: <StudentsPage />,
         },
         {
-          path: "/students", // mesmo endereço da GET/api/Students (http://localhost:5173/students)
+          path: "students", // mesmo endereço da GET/api/Students (http://localhost:5173/students)
           element: <StudentsPage />,
+        },
+        {
+          path: "students/new", // mesmo endereço da GET/api/Students (http://localhost:5173/students)
+          element: <StudentCreatePage />,
         },
         {
           path: "students/:id", // GET/api/Students/{id}
@@ -36,6 +41,11 @@ export const router = createBrowserRouter([
             Depois acessamos via useParams().
           */
         },
+        {
+          path: "students/:id/edit", // PUT/api/Students/{id}
+          element: <StudentEditPage />,
+        },
+        
     ],
   },
 ]);

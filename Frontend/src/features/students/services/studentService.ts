@@ -25,9 +25,7 @@ export async function getStudents(): Promise<Student[]> {
   // Fazendo a requisição HTTP...
   const response = await api.get("/students");
 
-  return response.data;
-
-  
+  return response.data;  
 };
 
 export async function getStudentById(id: string) {
@@ -35,4 +33,14 @@ export async function getStudentById(id: string) {
 
   // seu backend retorna { data, success }
   return response.data.data as StudentDetailed
+}
+
+export async function createStudent(data: any) {
+  const response = await api.post("/students", data)
+  return response.data
+}
+
+export async function updateStudent(id: string, data: any) {
+  const response = await api.put(`/students/${id}`, data)
+  return response.data
 }

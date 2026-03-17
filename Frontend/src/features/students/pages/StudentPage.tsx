@@ -8,11 +8,14 @@ Hook → Components
 
 import { useStudents } from "../hooks/useStudents";
 import { StudentCard } from "../components/StudentCard";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentsPage() {
   
   //returns do Hook useStudents.ts
   const { students, loading, error, reload } = useStudents();
+
+  const navigate = useNavigate();
 
   if (loading) {
     return <p>Carregando alunos...</p>;
@@ -38,6 +41,13 @@ export default function StudentsPage() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Alunos</h1>
+
+      <div style={{ marginBottom: 20 }}>
+        {/* navegando para a rota /students/new declarada no arquivo router.tsx*/}
+        <button onClick={() => navigate("/students/new")}>
+          Adicionar Aluno
+        </button>
+      </div>
 
       <div
         style={{
