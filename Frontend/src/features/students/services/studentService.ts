@@ -1,5 +1,6 @@
 import { api } from "../../../shared/services/api";
 import type { Student } from "../types/Student";
+import type { StudentDetailed } from "../types/StudentDetailed"
 
 /*
 Função responsável por buscar estudantes no backend.
@@ -28,3 +29,10 @@ export async function getStudents(): Promise<Student[]> {
 
   
 };
+
+export async function getStudentById(id: string) {
+  const response = await api.get(`/students/${id}`)
+
+  // seu backend retorna { data, success }
+  return response.data.data as StudentDetailed
+}

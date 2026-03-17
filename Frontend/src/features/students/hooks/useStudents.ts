@@ -14,6 +14,8 @@ Ela conversa apenas com HOOKS.
 import { useEffect, useState } from "react";
 import { getStudents } from "../services/StudentService";
 import type { Student } from "../types/Student";
+import { getStudentById } from "../services/StudentService"
+import type { StudentDetailed } from "../types/StudentDetailed"
 
 export function useStudents() {
     // dados
@@ -68,4 +70,31 @@ export function useStudents() {
         error,
         reload: loadStudents,
     };
+    
 }
+
+export function useStudent(id?: string) {
+        const [student, setStudent] = useState<StudentDetailed | null>(null)
+        const [loading, setLoading] = useState(true)
+        const [error, setError] = useState<string | null>(null)
+
+        async function loadStudent() {
+            if (!id) return
+
+            try {
+            setLoading(true)
+            const data = await getStudentById(id)
+            setStudent(data)
+            } catch {
+            setError("Erro ao carregar aluno")
+            } finally {
+            setLoading(false)
+            }
+        }
+
+        useEffect(() => {
+            loadStudent()
+        }, [id])
+
+        return { student, loading, error, reload: loadStudent }
+        }

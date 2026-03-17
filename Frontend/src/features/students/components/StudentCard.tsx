@@ -14,10 +14,9 @@ Responsabilidades:
 // Importamos o tipo Student
 // Isso garante tipagem forte (TypeScript protege contra erros)
 import type { Student } from "../types/Student";
-
 import { formatDateToPtBr } from "../../../shared/utils/dateUtils";
-
 import { colors, spacing, radius, shadows } from "../../../shared/styles/tokens";
+import { useNavigate } from "react-router-dom";
 
 // Aqui estamos dizendo:
 // Esse componente recebe a seguinte props:
@@ -29,8 +28,15 @@ type Props = {
 // Aqui estamos "desestruturando" as props
 // Isso significa que estamos pegando student
 export function StudentCard({ student }: Props) {
+  const navigate = useNavigate()
+
+  function handleClick() {
+    navigate(`/students/${student.id}`)
+  }
+
   return (
-    <div
+    <div 
+      onClick={handleClick}
       style={{
         background: colors.surface,
         padding: spacing.lg,
