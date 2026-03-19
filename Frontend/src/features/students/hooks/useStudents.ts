@@ -1,5 +1,6 @@
 /*
-Custom Hook
+Um Hook é lógica reutilizável com estado + efeitos.
+Pense nele como StudentController do frontend
 
 Responsável por:
 - buscar dados
@@ -24,7 +25,7 @@ export function useStudents() {
     // estado de carregamento
     const [loading, setLoading] = useState(true);
 
-    // ⭐ estado de erro
+    // estado de erro
     const [error, setError] = useState<string | null>(null);
 
     async function loadStudents() {
@@ -33,7 +34,7 @@ export function useStudents() {
             setLoading(true);
             setError(null);
 
-            // Chamada para API através da camada de service
+            // Chamada para API através da camada de service do front (StudentService.ts)
             const data = await getStudents();
 
             // Console de controle para verificar o que está chegando da API
@@ -57,11 +58,13 @@ export function useStudents() {
         }
     }
 
-    // useEffect executa ao montar página
-    // O segundo parâmetro [] significa: execute apenas uma vez
-    useEffect(() => {
-            loadStudents();
-    }, []);
+        // useEffect() é executado automaticamente quando acessamos o Hook.
+        // Se o Hook for invocado com useStudent(id?: string) a função mais 
+        // abaixo será executada em vez dessa sem parâmetro.
+        // O segundo parâmetro [] do useStudent significa: execute apenas 1x
+        useEffect(() => {
+                loadStudents();
+        }, []);
 
     // Renderização principal
     return {
@@ -82,13 +85,13 @@ export function useStudent(id?: string) {
             if (!id) return
 
             try {
-            setLoading(true)
-            const data = await getStudentById(id)
-            setStudent(data)
+                setLoading(true)
+                const data = await getStudentById(id)
+                setStudent(data)
             } catch {
-            setError("Erro ao carregar aluno")
+                setError("Erro ao carregar aluno")
             } finally {
-            setLoading(false)
+                setLoading(false)
             }
         }
 

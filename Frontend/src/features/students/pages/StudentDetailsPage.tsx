@@ -1,16 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useStudent } from "../hooks/useStudents"
-import { Loader } from "../../../shared/components/AppLoader"
+import { AppLoader } from "../../../shared/components/AppLoader"
+import { formatDateToPtBr } from "../../../shared/utils/dateUtils";
 
 
 export default function StudentDetailsPage() {
   const { id } = useParams()
 
+  // retorno do hook (useStudens.ts)
   const { student, loading, error, reload } = useStudent(id)
 
   const navigate = useNavigate();
 
-  if (loading) return <Loader />
+  if (loading) return <AppLoader />
 
   if (error)
     return (
@@ -28,17 +30,28 @@ export default function StudentDetailsPage() {
 
       <p><strong>Nº do documento:</strong> {student.documentNumber}</p>
       <p><strong>Tipo:</strong> {student.documentType}</p>
-      <p><strong>Data nascimento:</strong> {student.dateOfBirth}</p>
-      <p><strong>Status:</strong> {student.isActive ? "Ativo" : "Inativo"}</p>
-      <p><strong>Aluno cadastrado em:</strong> {student.createdAt}</p>
+      <p><strong>Data de nascimento:</strong> {formatDateToPtBr(student.dateOfBirth)}</p>
+      <p><strong>Status:</strong><span
+          style={{
+            background: student.isActive ? "#dcfce7" : "#fee2e2",
+            color: student.isActive ? "#166534" : "#991b1b",
+            padding: "4px 10px",
+            borderRadius: "999px",
+            fontWeight: 600,
+          }}
+        >
+          {student.isActive ? "Ativo" : "Inativo"}
+        </span>
+      </p>
+      <p><strong>Cadastrado em:</strong> {formatDateToPtBr(student.createdAt)}</p>
       {student.deactivatedAt ? (
-        <p><strong>Aluno desabilitado em:</strong> {student.deactivatedAt}</p>
+        <p><strong>Desabilitado em:</strong> {formatDateToPtBr(student.deactivatedAt)}</p>
       ) : ("")}
       
 
       <hr />
 
-      <h2>Anamnese</h2>
+      <h2>Ficha de anamnese</h2>
 
       {student.anamnesis ? (
         <p>{student.anamnesis.content}</p>

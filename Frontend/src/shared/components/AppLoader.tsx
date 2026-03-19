@@ -7,7 +7,7 @@ Responsável por:
 ✔ identidade visual inicial
 */
 
-export function Loader() {
+export function AppLoader() {
   return (
     <div
       style={{

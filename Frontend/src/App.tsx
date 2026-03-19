@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader } from "./shared/components/AppLoader";
+import { AppLoader } from "./shared/components/AppLoader";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./app/router/router";
 
@@ -22,7 +22,7 @@ export default function App() {
 
   // ⭐ tela inicial
   if (isBooting) {
-    return <Loader />;
+    return <AppLoader />;
   }
 
   // ⭐ app real

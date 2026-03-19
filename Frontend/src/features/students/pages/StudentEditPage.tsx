@@ -3,6 +3,7 @@ import { StudentForm } from "../components/StudentForm"
 import { useStudent } from "../hooks/useStudents"
 import { updateStudent } from "../services/StudentService"
 import { Loader } from "../../../shared/components/AppLoader"
+import toast from "react-hot-toast"
 
 export default function StudentEditPage() {
   const { id } = useParams()
@@ -13,8 +14,15 @@ export default function StudentEditPage() {
   if (loading || !student) return <Loader />
 
   async function handleUpdate(data: any) {
-    await updateStudent(id!, data)
-    navigate(`/students/${id}`)
+    try {
+      await updateStudent(id!, data)
+
+      toast.success("Aluno atualizado!")
+
+      navigate(`/students/${id}`)
+    } catch {
+      toast.error("Erro ao atualizar aluno")
+    }
   }
 
   return (

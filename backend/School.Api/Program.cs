@@ -3,11 +3,6 @@
     ESTE ARQUIVO É O CORAÇÃO DA APLICAÇÃO
     ===============================*/
     
-// Namespace principal do ASP.NET Core
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 // Namespace do Entity Framework Core
 using Microsoft.EntityFrameworkCore;
 

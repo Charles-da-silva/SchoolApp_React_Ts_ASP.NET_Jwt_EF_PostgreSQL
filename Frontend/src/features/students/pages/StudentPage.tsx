@@ -16,9 +16,10 @@ export default function StudentsPage() {
   const { students, loading, error, reload } = useStudents();
 
   const navigate = useNavigate();
-
-  if (loading) {
+  
+  if (loading) { 
     return <p>Carregando alunos...</p>;
+    // Enquanto API responde → mostra feedback.
   }
 
   if (error) {
@@ -26,24 +27,29 @@ export default function StudentsPage() {
       <div>
         <p>{error}</p>
 
-        {/* reload vem do hook */}
+        {/* reload vem do hook, que na verdade recebe a função 
+        loadStudents() do próprio hook. Assim Se backend falhar
+        o usuário pode tentar novamente. */}
         <button onClick={reload}>Tentar novamente</button>
       </div>
     
     );
   }
 
-  if (!students.length) {
-    return <p>Nenhum aluno cadastrado.</p>;
+  if (!students.length) {  {/*API funcionou mas não há dados.*/}
+    return <p>Nenhum aluno cadastrado.</p>;  
   }
 
-  // success state
+  // Success state. Só aqui renderizamos a página com o conteúdo.
   return (
+
     <div style={{ padding: "20px" }}>
       <h1>Alunos</h1>
 
       <div style={{ marginBottom: 20 }}>
-        {/* navegando para a rota /students/new declarada no arquivo router.tsx*/}
+        
+        {/* Navegando para a rota /students/new declarada no arquivo router.tsx
+            React Router muda URL sem reload.*/}
         <button onClick={() => navigate("/students/new")}>
           Adicionar Aluno
         </button>
