@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { StudentForm } from "../components/StudentForm"
 import { useStudent } from "../hooks/useStudents"
 import { updateStudent } from "../services/StudentService"
-import { Loader } from "../../../shared/components/AppLoader"
+import { AppLoader } from "../../../shared/components/AppLoader"
 import toast from "react-hot-toast"
 
 export default function StudentEditPage() {
@@ -11,7 +11,7 @@ export default function StudentEditPage() {
 
   const { student, loading } = useStudent(id)
 
-  if (loading || !student) return <Loader />
+  if (loading || !student) return <AppLoader />
 
   async function handleUpdate(data: any) {
     try {
