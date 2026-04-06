@@ -8,13 +8,10 @@ import { colors, spacing } from "../shared/styles/tokens";
 
 export function MainLayout() {
   return (
-    <div style={{
-        width: "calc(98vw)", 
-        background: "white", padding: 0, margin: 0}}>
+    <div style={{width: "calc(98vw)", background: "white", padding: 0, margin: 0}}>
       <Header />
 
-      <div style={{ 
-        display: "flex",}}>
+      <div style={{ display: "flex",}}>
         <Sidebar />
 
         <main

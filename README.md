@@ -8,6 +8,8 @@ explicações técnicas, enquanto eu realizo o estudo, compreensão, validação
 O objetivo da criação do projeto é vivenciar uma experiência próxima à realidade de mercado, simulando o cenário onde um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de
 compreender o problema, buscar, implementar, testar e evoluir soluções até entregar o melhor produto possível.
 <br><br>
+OBS.: Projeto pausado para entrega de uma atividade extensinista da faculdade
+<br><br>
 
 ## 🎯 Objetivos do Projeto
 
