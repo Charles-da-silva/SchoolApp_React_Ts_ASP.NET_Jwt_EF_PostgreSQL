@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using School.Api.Application.Common;
 
-namespace School.Api.Controllers
+namespace School.Api.API.Controllers
 {
     [ApiController]
     public abstract class BaseController : ControllerBase

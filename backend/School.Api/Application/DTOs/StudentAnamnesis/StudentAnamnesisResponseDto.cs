@@ -1,4 +1,5 @@
-namespace School.Api.Application.DTOs.Students
+
+namespace School.Api.Application.DTOs.StudentsAnamnesis
 {
     // DTO usado para criar a ficha médica/anamnese de um aluno.
     // DTO (Data Transfer Object) é um padrão para transportar dados entre camadas.

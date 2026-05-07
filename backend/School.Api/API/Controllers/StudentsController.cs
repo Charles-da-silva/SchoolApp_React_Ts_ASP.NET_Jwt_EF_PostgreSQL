@@ -2,25 +2,27 @@
 using Microsoft.AspNetCore.Mvc;
 
 using School.Api.Application.DTOs.Students;
-
+using School.Api.Application.DTOs.StudentsAnamnesis;
 using School.Api.Application.Services.Interfaces;
 
 
-namespace School.Api.Controllers
+namespace School.Api.API.Controllers
 {
     /*
-    Indica que esta classe é um Controller de API. Diz ao ASP.NET: “Essa classe responde requisições HTTP e retorna JSON.”
+    [ApiController] Indica que esta classe é um Controller de API. Diz ao ASP.NET: “Essa classe responde 
+    requisições HTTP e retorna JSON.”
     Controller responsável apenas por:
         - Receber requisições HTTP
-        - Chamar o serviço
+        - Chamar o Service
         - Retornar resposta HTTP
         - Não acessa o banco diretamente, quem faz isso é o serviço (StudentService.cs).
     */
     [ApiController]
 
     // Define a rota base:  /api/students
-    // O que ele faz é substituir [controller] pelo nome da classe sem a palavra “Controller”.
+    // O que ele faz é substituir [controller] pelo nome da classe sem a palavra “Controller”
     [Route("api/[controller]")]
+
 
     // Controller responsável por gerenciar alunos (Students).
     public class StudentsController : BaseController
@@ -47,17 +49,20 @@ namespace School.Api.Controllers
         ENDPOINT: GET /api/students
         =========================
             Objetivo:
-            - Buscar todos os alunos ativos no banco
+            - Buscar todos os alunos no banco, considerando os filtros do StudentFilterDto
             - Retornar uma lista em formato JSON
         ==> async:  Indica que o método é assíncrono e nos permite usar o "await" dentro do método.
             Ele pode “esperar” uma operação demorada (banco, rede, disco) sem travar o servidor.
             Em APIs reais, quase tudo que acessa banco deve ser async.
-        ==> Task<...>:  Representa uma operação que começa agora e termina no futuro. O tipo dentro do Task indica o que será retornado quando a operação terminar.
-        ==> ActionResult: Ele é um tipo especial que permite retornar um objeto do tipo T ou qualquer resultado HTTP (Ok, NotFound, etc.)
-                Ele combina os dois mundos:  Dados e Status HTTP
-                Para endpoints que retornam dados → use ActionResult<T>
-                Para endpoints que não retornam dados (ex: DELETE) → use IActionResult
-        ==> IEnumerable<StudentResponseDto>:  Uma coleção de StudentResponseDto, podendo ser lista, array, etc.
+        ==> Task<...>:  Representa uma operação que começa agora e termina no futuro. O tipo dentro do 
+            Task indica o que será retornado quando a operação terminar.
+            ==> ActionResult: Ele é um tipo especial que permite retornar um objeto do tipo T ou qualquer 
+            resultado HTTP (Ok, NotFound, etc.)
+                    Ele combina os dois mundos:  Dados e Status HTTP
+                    Para endpoints que retornam dados → use ActionResult<T>
+                    Para endpoints que não retornam dados (ex: DELETE) → use IActionResult
+            ==> IEnumerable<StudentResponseDto>:  Uma coleção de StudentResponseDto, podendo ser lista, 
+            array, etc.
         */
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentResponseDto>>> GetStudents(
