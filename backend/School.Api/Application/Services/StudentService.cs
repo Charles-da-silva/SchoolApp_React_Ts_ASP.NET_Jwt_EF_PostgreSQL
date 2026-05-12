@@ -112,7 +112,8 @@ namespace School.Api.Application.Services
                     FullName = existingStudent.FullName,
                     DocumentType = existingStudent.DocumentType.ToString(),
                     DocumentNumber = existingStudent.DocumentNumber,
-                    DateOfBirth = existingStudent.DateOfBirth
+                    DateOfBirth = existingStudent.DateOfBirth,
+                    IsActive = existingStudent.IsActive
                 };
 
                 return Result<StudentResponseDto>.Fail(
@@ -129,6 +130,7 @@ namespace School.Api.Application.Services
                 DocumentType = dto.DocumentType,
                 DocumentNumber = dto.DocumentNumber,
                 DateOfBirth = dto.DateOfBirth,
+                Email = dto.Email ?? string.Empty,
                 IsActive = true,
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
             };
@@ -269,13 +271,15 @@ namespace School.Api.Application.Services
                 );
             }
 
+            /*
+
             if (student.DeactivatedAt > DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5)))
             {
                 return Result.Fail(
                     "Aluno foi desativado há menos de 5 anos. Aguarde o período de retenção.",
                     ErrorType.Conflict
                 );
-            }
+            }*/
 
             await _studentRepository.DeleteAsync(student);
 

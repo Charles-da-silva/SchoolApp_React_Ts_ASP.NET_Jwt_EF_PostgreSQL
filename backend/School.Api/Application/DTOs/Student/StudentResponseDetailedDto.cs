@@ -1,4 +1,4 @@
-using School.Api.Application.DTOs.StudentsAnamnesis;
+
 
 namespace School.Api.Application.DTOs.Students
 {
@@ -14,12 +14,13 @@ namespace School.Api.Application.DTOs.Students
 
         public DateOnly DateOfBirth { get; set; }
 
+        public string? Email { get; set; } = string.Empty;
+
         public bool IsActive { get; set; }
 
         public DateOnly CreatedAt { get; set; }
 
         public DateOnly? DeactivatedAt { get; set; }
 
-        public StudentAnamnesisResponseDto? Anamnesis { get; set; }
     }
 }

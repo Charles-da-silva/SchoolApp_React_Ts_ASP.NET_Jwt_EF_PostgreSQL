@@ -73,7 +73,7 @@ namespace School.Api.Application.Services
 
       if (!await _context.Students.AnyAsync(s => s.Id == studentId))
         return Result<StudentAnamnesisResponseDto>
-            .Fail("Aluno não encontrado.", ErrorType.NotFound);
+            .Fail("O ID do aluno não foi encontrado.", ErrorType.NotFound);
 
       var existingAnamneses = await _context.StudentAnamneses
           .AnyAsync(a => a.StudentId == studentId);
@@ -110,6 +110,14 @@ namespace School.Api.Application.Services
         Guid studentId,
         StudentAnamnesisUpdateDto dto)
     {
+
+      var student = await _context.Students
+      .AnyAsync(s => s.Id == studentId);
+
+      if (!await _context.Students.AnyAsync(s => s.Id == studentId))
+        return Result<StudentAnamnesisResponseDto>
+            .Fail("O ID do aluno não foi encontrado.", ErrorType.NotFound);
+            
       var anamnesis = await _context.StudentAnamneses
       .FirstOrDefaultAsync(a => a.StudentId == studentId);
 

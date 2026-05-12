@@ -52,7 +52,7 @@ namespace School.Api.Application.Common
                 Data = data 
                 };
 
-        public new static Result<T> Fail(string message, ErrorType errorType, T? data = default)
+        public static Result<T> Fail(string message, ErrorType errorType, T? data = default)
             => new Result<T> { 
                 Success = false,
                 Message = message,

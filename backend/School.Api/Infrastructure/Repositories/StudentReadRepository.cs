@@ -21,14 +21,16 @@ public class StudentReadRepository : IStudentReadRepository
     }
     public async Task<IEnumerable<StudentResponseDto>> GetAllAsync(StudentFilterDto filter)
     {
-        // StringBuilder ajuda a montar SQL dinâmico
+        // StringBuilder ajuda a montar SQL dinâmico, para depois usar o sql.Append
+        /* aqui em baixo estamos fazendo um mapping (usando AS) para o Dapper
+        conseguir mapear a coluna na tabela com a propriedade no C# */
         var sql = new StringBuilder(@"
             SELECT
                 id AS Id,
                 full_name AS FullName,
                 email AS Email,
+                document_type AS DocumentType,
                 document_number AS DocumentNumber,
-                date_of_birth AS DateOfBirth,
                 is_active AS IsActive
             FROM students
             WHERE 1 = 1"
@@ -125,11 +127,16 @@ public class StudentReadRepository : IStudentReadRepository
             SELECT
                 s.id AS Id,
                 s.full_name AS FullName,
-                s.email AS Email,
+                s.date_of_birth AS DateOfBirth,
+                s.document_type AS DocumentType,
                 s.document_number AS DocumentNumber,
-                s.is_active AS IsActive
-            FROM students 
-            WHERE s.id = @Id";
+                s.email AS Email,
+                s.is_active AS IsActive,
+                s.created_at AS CreatedAt,
+                s.deactivated_at AS DeactivatedAt
+            FROM students s
+            WHERE s.id = @Id
+        ";
         
         using var connection = _context.CreateConnection();
 
