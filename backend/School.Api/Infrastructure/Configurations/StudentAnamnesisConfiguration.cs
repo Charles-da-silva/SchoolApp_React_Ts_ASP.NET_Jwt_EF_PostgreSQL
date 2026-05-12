@@ -7,7 +7,7 @@ namespace School.Api.Infrastructure.Configurations
   {
     public void Configure(EntityTypeBuilder<StudentAnamnesis> builder)
     {
-      builder.ToTable("StudentAnamneses");
+      builder.ToTable("student_anamneses");
 
       builder.HasKey(a => a.Id);
 

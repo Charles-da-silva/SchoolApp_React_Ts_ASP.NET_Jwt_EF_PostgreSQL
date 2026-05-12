@@ -8,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 // Nosso DbContext
 using School.Api.Infrastructure.Data;
-using School.Api.Application.Services.Interfaces;
+using School.Api.Application.Interfaces.Services;
 using School.Api.Application.Services;
+using School.Api.Application.Interfaces.Repositories;
+using School.Api.Infrastructure.Repositories;
 
 // Cria o "builder" da aplicação.
 // Ele é responsável por:
@@ -36,8 +38,9 @@ builder.Services.AddControllers();
         - Isso segue o Dependency Inversion Principle (SOLID) - dependemos de abstrações,
 */
 builder.Services.AddScoped<IStudentService, StudentService>();
-
 builder.Services.AddScoped<IStudentAnamnesisService, StudentAnamnesisService>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IStudentReadRepository, StudentReadRepository>();
 
 // Registra serviços necessários para o Swagger/OpenAPI.
 // Isso permite documentar e testar a API via navegador.
@@ -59,10 +62,25 @@ builder.Services.AddDbContext<SchoolDbContext>(options =>
 {
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
-    ); 
-    // UseNpgsql -> Configura o EF Core para usar o PostgreSQL
-    // GetConnectionString -> Lê o appsettings.json / permite trocar banco sem mudar muitos códigos
+    )
+    .UseSnakeCaseNamingConvention();
+
+    /* 
+    UseNpgsql -> Configura o EF Core para usar PostgreSQL
+    GetConnectionString -> Lê a connection string do appsettings.json
+    UseSnakeCaseNamingConvention -> Converte automaticamente:
+        Students -> students
+        FullName -> full_name
+        DateOfBirth -> date_of_birth
+
+        Isso porque o padrão em C# é PascalCase mas no Postgres
+        o padrão é snake_case, então é preciso fazer essa conversão.
+    */
 });
+
+// Configuração do Dapper
+builder.Services.AddScoped<DapperContext>();
+
 
 // Configuração de CORS (Cross-Origin Resource Sharing)
 // Isso é necessário para permitir que o frontend (que roda em outro domínio/porta) acesse a API 

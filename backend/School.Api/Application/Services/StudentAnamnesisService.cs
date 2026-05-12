@@ -9,7 +9,7 @@ uma para Student e outra para StudentAnamnesis.
 */
 
 // Using para fazer a importação da interface IStudentService, que define o contrato do serviço de alunos.
-using School.Api.Application.Services.Interfaces;
+using School.Api.Application.Interfaces.Services;
 
 // Using para trabalhar com EF Core (LINQ, DbContext, etc.)
 using Microsoft.EntityFrameworkCore;

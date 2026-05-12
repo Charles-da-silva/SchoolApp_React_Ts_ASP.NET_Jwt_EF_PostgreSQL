@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using School.Api.Application.DTOs.Students;
 using School.Api.Application.DTOs.StudentsAnamnesis;
-using School.Api.Application.Services.Interfaces;
+using School.Api.Application.Interfaces.Services;
 
 
 namespace School.Api.API.Controllers

@@ -1,435 +1,287 @@
 
 // Using para fazer a importação da interface IStudentService, que define o contrato do serviço de alunos.
-using School.Api.Application.Services.Interfaces;
-
-// Using para trabalhar com EF Core (LINQ, DbContext, etc.)
-using Microsoft.EntityFrameworkCore;
-
-// Using para fazer a importação do DbContext da aplicação
-using School.Api.Infrastructure.Data;
+using School.Api.Application.Interfaces.Services;
 
 // Using para fazer a importação das entidades, como a Student
 using School.Api.Domain.Entities;
 
 using School.Api.Application.DTOs.Students;
-using School.Api.Application.DTOs.StudentsAnamnesis;
 
 // Importante Exception personalizada para regras de negócio
 using School.Api.Application.Common;
 using School.Api.Domain.Enums;
 
+using School.Api.Application.Interfaces.Repositories;
+
 namespace School.Api.Application.Services
 {
-  /*
-      Implementação do serviço de alunos.
-
-      Aqui estamos criando a classe StudentService que implementa a interface IStudentService. 
-      A classe fica obrigada a implementar todos os métodos definidos na interface, garantindo que o 
-      contrato seja cumprido. 
-
-      Aqui ficam as regras de negócio.
-      O Controller NÃO deve acessar o DbContext diretamente.               
-      Essa classe é a implementação concreta do contrato definido por IStudentService.
-      Ela é responsável por realizar as operações de CRUD (Create, Read, Update, Delete) para os alunos, 
-      utilizando o SchoolDbContext para acessar o banco de dados.
-      Ao seguir a interface IStudentService, garantimos que o Controller possa depender apenas da 
-      abstração (interface) e não da implementação concreta, promovendo um design mais flexível e 
-      testável.
-      Além disso, ao centralizar a lógica de negócios nesta classe, mantemos o Controller mais limpo e 
-      focado apenas em lidar com as requisições HTTP e respostas, enquanto toda a lógica relacionada 
-      aos alunos fica encapsulada ns Service.
-      Essa abordagem segue os princípios de SOLID, especialmente o DIP (Dependency Inversion Principle),
-      e facilita a manutenção e evolução do código ao longo do tempo.
-  */
-
-  public class StudentService : IStudentService
-  {
     /*
-        private - Essa variável só pode ser usada dentro da classe. Boa prática: dependências devem 
-        ser privadas.
+        Implementação do serviço de alunos.
 
-        readonly - Significa que essa variável:
-            Só pode ser atribuída no construtor
-            Não pode ser alterada depois
-            Isso evita bugs e mantém imutabilidade da dependência.
-            Muito usado em injeção de dependência.
+        Aqui estamos criando a classe StudentService que implementa a interface IStudentService. 
+        A classe fica obrigada a implementar todos os métodos definidos na interface, garantindo que o 
+        contrato seja cumprido. 
 
-        SchoolDbContext - É o tipo da variável. Ou seja, _context é uma instância do seu DbContext. 
-        Ele representa a conexão com o banco e as tabelas.
-
-        _context - Nome da variável. Underline é convenção para campos privados.
+        Aqui ficam as regras de negócio.
+        O Controller NÃO deve acessar o DbContext diretamente.               
+        Essa classe é a implementação concreta do contrato definido por IStudentService.
+        Ao seguir a interface IStudentService, garantimos que o Controller possa depender apenas da 
+        abstração (interface) e não da implementação concreta, promovendo um design mais flexível e 
+        testável.
+        Além disso, ao centralizar a lógica de negócios nesta classe, mantemos o Controller mais limpo e 
+        focado apenas em lidar com as requisições HTTP e respostas, enquanto toda a lógica relacionada 
+        aos alunos fica encapsulada ns Service.
+        Essa abordagem segue os princípios de SOLID, especialmente o DIP (Dependency Inversion Principle),
+        e facilita a manutenção e evolução do código ao longo do tempo.
+        Essa classe Service aciona a classe Repository correspondente e a Repository é responsável manipular 
+        o banco, utilizando o SchoolDbContext.
     */
-    private readonly SchoolDbContext _context;
 
-    /// Injeção de dependência do DbContext - DEPENDENCY INJECTION (DI)
-
-    /* O .NET cria automaticamente essa instância porque o SchoolDbContext foi registrado como 
-    serviço no Program.cs. O framework cuida de criar e fornecer a instância correta quando o 
-    StudentService for criado. Isso é o que chamamos de "Inversão de Controle" - a classe não 
-    precisa se preocupar em criar suas dependências, elas são fornecidas pelo framework. Assim, 
-    o código fica mais limpo, testável e desacoplado. */
-    public StudentService(SchoolDbContext context)
+    public class StudentService : IStudentService
     {
-      _context = context;
-    }
 
-    public async Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync(StudentFilterDto filter)
-    {
-      var query = _context.Students.AsQueryable();
-      /* O que isso significa?
-          _context.Students → tabela Students
-          AsQueryable() → transforma em algo que pode receber filtros dinamicamente
-      Importante:
-          Nada foi executado no banco ainda.
-          Você está apenas montando a consulta */
+        private readonly IStudentRepository _studentRepository;
+        private readonly IStudentReadRepository _studentReadRepository;
 
-      /* Os IFs abaixo verificam se o filtro tem algum valor e, se tiver, 
-      adicionam uma condição à consulta no banco, mas a consulta só é executada quando
-      chamamos o ToListAsync() no final, que é quando o EF Core traduz tudo para SQL 
-      e executa no banco. */
-
-      // Validação: Se MinAge e MaxAge forem enviados, MinAge não pode ser maior que MaxAge
-      if (filter.MinAge.HasValue &&
-          filter.MaxAge.HasValue &&
-          filter.MinAge > filter.MaxAge)
-      {
-        return Result<IEnumerable<StudentResponseDto>>.Fail(
-            "MinAge não pode ser maior que MaxAge.",
-            ErrorType.Validation
-        );
-      }
-
-      if (filter.MinAge.HasValue)
-      {
-        var maxBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-filter.MinAge.Value));
-        query = query.Where(s => s.DateOfBirth <= maxBirthDate);
-        /* Aqui estamos calculando a idade mínima, por exemplo, 5 anos.
-        Estamos trabalhando com datas, pois o banco tem a data de nascimento, não a idade.
-        Então, para filtrar por idade, precisamos converter a idade em uma data de nascimento 
-        máxima, qual está sendo calculada com DateTime.UtcNow.AddYears(-filter.MinAge.Value).
-        Se quisermos filtrar por alunos com idade mínima de 5 anos, a data de nascimento deve 
-        ser menor ou igual a 5 anos atrás, ou seja, DataNascimento <= hoje - 5 anos.
-
-        A observação é que estamos usando o DateOnly, pois DateTime traz horas além da data
-        e na conversão para pt-br no Front (UTC para horário local) dependendo do horário do 
-        registro de nascimento, estava sendo exibido um dia a menos*/
-      }
-
-      if (filter.MaxAge.HasValue)
-      {
-        var minBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-filter.MaxAge.Value));
-        query = query.Where(s => s.DateOfBirth >= minBirthDate);
-        /* Aqui estamos calculando a idade máxima, por exemplo, 10 anos.
-        A lógica é semelhante ao filtro de idade mínima, mas invertida. Para filtrar por alunos
-        com idade máxima de 10 anos, a data de nascimento deve ser maior ou igual a 10 anos atrás, 
-        ou seja, DataNascimento >= hoje - 10 anos.
-        */
-      }
-
-      /* Usamos o HasValue para verificar se o filtro IsActive tem um valor (true ou false). 
-      Se não tiver significa que é null e, nesse caso, não aplicamos o filtro. 
-      Se tiver um valor, aplicamos o filtro para posteriormente realizar a busca no DB. */
-      if (filter.IsActive.HasValue)
-        query = query.Where(s => s.IsActive == filter.IsActive.Value);
-
-      /*Usamos o IsNullOrWhiteSpace em vez do HasValue porque Name é uma string, 
-      e queremos verificar se ela é nula, vazia ou composta apenas por espaços em branco, assim
-      não adicionaremos esse filtro na consulta. Se usássemos apenas o HasValue, ele não funcionaria 
-      corretamente para strings, pois uma string vazia ou composta por espaços em branco ainda seria 
-      considerada um valor válido, o que não é o comportamento desejado para um filtro de pesquisa.
-
-      Tipos valor (bool, int, DateTime) precisam ser nullable (?) para saber se foram enviados.
-      Strings já são referência, então podem ser null naturalmente.*/
-
-      // "Contains" no EF vira LIKE no comando SQL: WHERE FullName LIKE '%joao%'
-      if (!string.IsNullOrWhiteSpace(filter.Name))
-        query = query.Where(s => s.FullName.Contains(filter.Name));
-
-      if (!string.IsNullOrWhiteSpace(filter.DocumentNumber))
-        query = query.Where(s => s.DocumentNumber.Contains(filter.DocumentNumber));
-
-      if (filter.CreatedAfter.HasValue)
-        query = query.Where(s => s.CreatedAt >= filter.CreatedAfter.Value);
-
-      /* query.ToListAsync()  ==> Aqui o EF Core:
-          - Junta todos os filtros
-          - Converte LINQ → SQL
-          - Abre conexão
-          - Executa SELECT
-          - Converte linhas em objetos Student
-          - Retorna List<Student>
-      Agora sim o banco foi consultado. */
-      var students = await query.ToListAsync();
-      /* 
-          .ToListAsync() - Aqui o EF Core:
-              - Traduz LINQ → SQL
-              - Abre conexão
-              - Executa o SELECT
-              - Converte linhas → objetos Student
-              - Retorna uma lista
-          Por isso precisa do await.
-      */
-
-      // Select é como um .map - transforma cada entidade Student em um StudentResponseDto
-      var response = students.Select(s => new StudentResponseDto
-      {
-        Id = s.Id,
-        FullName = s.FullName,
-        DocumentType = s.DocumentType.ToString(),
-        DocumentNumber = s.DocumentNumber,
-        DateOfBirth = s.DateOfBirth,
-        IsActive = s.IsActive
-      });
-
-      return Result<IEnumerable<StudentResponseDto>>.Ok(response);
-    }
-
-    public async Task<Result<StudentResponseDetailedDto>> GetByIdAsync(Guid id)
-    {
-      /*
-          _context é o SchoolDbContext injetado no service. Representa a conexão com o banco.
-
-          FirstOrDefaultAsync é um método do LINQ que retorna o primeiro elemento que satisfaz a condição ou null se não encontrar.
-
-          s => s.Id == id é uma expressão lambda que compara o Id do aluno com o id passado na URL.
-          “Pegue cada Student (apelidado de s) e verifique se o Id dele é igual ao id recebido na URL”
-      */
-      var student = await _context.Students
-          .Include(s => s.Anamnesis)
-          .FirstOrDefaultAsync(s => s.Id == id);
-
-      if (student == null)
-        return Result<StudentResponseDetailedDto>
-            .Fail("Aluno não encontrado.", ErrorType.NotFound);
-
-      var response = new StudentResponseDetailedDto
-      {
-        Id = student.Id,
-        FullName = student.FullName,
-        DocumentType = student.DocumentType.ToString(),
-        DocumentNumber = student.DocumentNumber,
-        DateOfBirth = student.DateOfBirth,
-        IsActive = student.IsActive,
-        CreatedAt = student.CreatedAt,
-        DeactivatedAt = student.DeactivatedAt,
-
-        // Mapping seguro
-        Anamnesis = student.Anamnesis == null
-              ? null
-              : new StudentAnamnesisResponseDto
-              {
-                Id = student.Anamnesis.Id,
-                StudentId = id,
-                Content = student.Anamnesis.Content,
-                CreatedAt = student.Anamnesis.CreatedAt,
-                UpdatedAt = student.Anamnesis.UpdatedAt
-              }
-      };
-
-      return Result<StudentResponseDetailedDto>.Ok(response);
-    }
-
-    public async Task<Result<StudentResponseDto>> CreateAsync(StudentCreateDto dto)
-    {
-      /*  Enum.IsDefined(...) faz a verificação se o valor enviado no dto.DocumentType é um valor 
-          válido definido no enum DocumentType (CPF ou Certidão). 
-          string.IsNullOrWhiteSpace(...) verifica se o número do documento é nulo, vazio ou composto 
-          apenas por espaços em branco. 
-          Se qualquer uma dessas condições for verdadeira, significa que os dados do documento são 
-          inválidos, e o método retorna um resultado de falha com uma mensagem de erro apropriada. */
-      if (!Enum.IsDefined(typeof(DocumentType), dto.DocumentType) ||
-          string.IsNullOrWhiteSpace(dto.DocumentNumber))
-      {
-        return Result<StudentResponseDto>.Fail(
-            "Tipo e número do documento são obrigatórios.",
-            ErrorType.Validation);
-      }
-
-      // Verifica se já existe aluno com mesmo email no banco. 
-      // Se não existir o banco responde com null
-      var existingStudent = await _context.Students
-          .FirstOrDefaultAsync(s => s.DocumentType == dto.DocumentType && s.DocumentNumber == dto.DocumentNumber);
-
-      if (existingStudent != null)
-      {
-        // Se já existe um aluno com o mesmo CPF ou número da certidão, criamos uma variável 
-        // existingDto para retornar os dados do aluno
-        var existingDto = new StudentResponseDto
+        // Construtor:
+        public StudentService(
+            IStudentRepository studentRepository,
+            IStudentReadRepository studentReadRepository)
         {
-          Id = existingStudent.Id,
-          FullName = existingStudent.FullName,
-          DocumentType = existingStudent.DocumentType.ToString(),
-          DocumentNumber = existingStudent.DocumentNumber,
-          DateOfBirth = existingStudent.DateOfBirth
-        };
-
-        /*  Invocamos o método Result<StudentResponseDto>.Fail para retornar um resultado de falha, 
-            passando a mensagem de erro, os dados do aluno existente (variável existingDto) e 
-            indicando se é possível reativar o aluno. 
-            Isso permite que o Controller trate essa situação de forma adequada, retornando um 
-            status HTTP 409 Conflict com informações úteis para o cliente.*/
-        return Result<StudentResponseDto>.Fail(
-            "Já existe um aluno com este CPF ou número da certidão.",
-            ErrorType.Conflict,
-            existingDto
-        );
-      }
-
-      // Se o email ainda não existe, o método continua para criar um novo aluno normalmente, 
-      // convertendo o DTO de criação (CreateStudentDto) para a entidade Student, salvando no banco e 
-      var student = new Student
-      {
-        Id = Guid.NewGuid(),           // Gera identificador único. Evita dependência do banco para gerar ID. Boa prática para sistemas distribuídos.
-        FullName = dto.FullName,       // Vem do DTO
-        DocumentType = dto.DocumentType, // Vem do DTO
-        DocumentNumber = dto.DocumentNumber, // Vem do DTO
-        DateOfBirth = dto.DateOfBirth, // Vem do DTO
-        IsActive = true,               // Regra de negócio
-        CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)    // Backend controla
-      };
-
-      // Salvar no banco
-      _context.Students.Add(student);
-      await _context.SaveChangesAsync();
-
-      // Convertendo Entity → DTO de resposta
-      var response = new StudentResponseDto
-      {
-        Id = student.Id,
-        FullName = student.FullName,
-        DocumentType = student.DocumentType.ToString(),
-        DocumentNumber = student.DocumentNumber,
-        DateOfBirth = student.DateOfBirth
-      };
-
-      // Retornando um resultado de sucesso com os dados do aluno criado (StudentResponseDto armazendo dentro da variável response).
-      return Result<StudentResponseDto>.Ok(response);
-    }
-
-    public async Task<Result<StudentResponseDto>> UpdateAsync(Guid id, StudentUpdateDto dto)
-    {
-      // Buscar aluno no banco filtrando por ID
-      var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
-
-      // Se não encontrar o aluno, retorna null
-      if (student == null)
-      {
-        return Result<StudentResponseDto>.Fail("Aluno não existe.", ErrorType.NotFound);
-      }
-
-      if (student.IsActive == false)
-      {
-        return Result<StudentResponseDto>.Fail("Aluno está inativo. Reative para atualizar.", ErrorType.Conflict);
-      }
-
-      if (student.DocumentNumber != dto.DocumentNumber)
-      {
-        // Verificar se o novo número do documento já existe para outro aluno
-        var documentExists = await _context.Students.AnyAsync(s => s.DocumentNumber == dto.DocumentNumber && s.Id != id);
-
-        if (documentExists)
-        {
-          return Result<StudentResponseDto>.Fail("Já existe outro aluno com este email.", ErrorType.Conflict);
+            _studentRepository = studentRepository;
+            _studentReadRepository = studentReadRepository;
         }
-      }
 
-      // Se encontrou o aluno pelo ID e está ativo, a variável studente não será null, logo o método não executou o return acima, 
-      // passando para o passo abaixo onde atualiza os campos do student, usando as informações recebidas no DTO de atualização (UpdateStudentDto).
-      student.FullName = dto.FullName;
-      student.DocumentType = dto.DocumentType;
-      student.DocumentNumber = dto.DocumentNumber;
-      student.DateOfBirth = dto.DateOfBirth;
+        public async Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync(
+            StudentFilterDto filter)
+        {
+            if (filter.MinAge.HasValue &&
+                filter.MaxAge.HasValue &&
+                filter.MinAge > filter.MaxAge)
+            {
+                return Result<IEnumerable<StudentResponseDto>>.Fail(
+                    "MinAge não pode ser maior que MaxAge.",
+                    ErrorType.Validation
+                );
+            }
 
-      // Salva no banco e retorna true para indicar sucesso
-      await _context.SaveChangesAsync();
+            // Repository acessa banco
 
-      var response = new StudentResponseDto
-      {
-        Id = student.Id,
-        FullName = student.FullName,
-        DocumentType = student.DocumentType.ToString(),
-        DocumentNumber = student.DocumentNumber,
-        DateOfBirth = student.DateOfBirth,
-        IsActive = student.IsActive
-      };
+            var students = await _studentReadRepository.GetAllAsync(filter);
 
-      return Result<StudentResponseDto>.Ok(response);
+            return Result<IEnumerable<StudentResponseDto>>.Ok(students);
+        }
+
+        public async Task<Result<StudentResponseDetailedDto>> GetByIdAsync(Guid id)
+        {
+            var student =
+                await _studentReadRepository.GetDetailedByIdAsync(id);
+
+            if (student == null)
+            {
+                return Result<StudentResponseDetailedDto>.Fail(
+                    "Aluno não encontrado.",
+                    ErrorType.NotFound
+                );
+            }
+
+            return Result<StudentResponseDetailedDto>.Ok(student);
+        }
+
+        public async Task<Result<StudentResponseDto>> CreateAsync(StudentCreateDto dto)
+        {
+            if (!Enum.IsDefined(typeof(DocumentType), dto.DocumentType) ||
+                string.IsNullOrWhiteSpace(dto.DocumentNumber))
+            {
+                return Result<StudentResponseDto>.Fail(
+                    "Tipo e número do documento são obrigatórios.",
+                    ErrorType.Validation
+                );
+            }
+
+            var existingStudent =
+                await _studentRepository.GetByDocumentAsync(
+                    dto.DocumentNumber
+                );
+
+            if (existingStudent != null)
+            {
+                var existingDto = new StudentResponseDto
+                {
+                    Id = existingStudent.Id,
+                    FullName = existingStudent.FullName,
+                    DocumentType = existingStudent.DocumentType.ToString(),
+                    DocumentNumber = existingStudent.DocumentNumber,
+                    DateOfBirth = existingStudent.DateOfBirth
+                };
+
+                return Result<StudentResponseDto>.Fail(
+                    "Já existe um aluno com este documento.",
+                    ErrorType.Conflict,
+                    existingDto
+                );
+            }
+
+            var student = new Student
+            {
+                Id = Guid.NewGuid(),
+                FullName = dto.FullName,
+                DocumentType = dto.DocumentType,
+                DocumentNumber = dto.DocumentNumber,
+                DateOfBirth = dto.DateOfBirth,
+                IsActive = true,
+                CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
+            };
+
+            await _studentRepository.AddAsync(student);
+
+            await _studentRepository.SaveChangesAsync();
+
+            var response = new StudentResponseDto
+            {
+                Id = student.Id,
+                FullName = student.FullName,
+                DocumentType = student.DocumentType.ToString(),
+                DocumentNumber = student.DocumentNumber,
+                DateOfBirth = student.DateOfBirth,
+                IsActive = student.IsActive
+            };
+
+            return Result<StudentResponseDto>.Ok(response);
+        }
+
+        public async Task<Result<StudentResponseDto>> UpdateAsync(Guid id, StudentUpdateDto dto)
+        {
+            // Buscar aluno no banco filtrando por ID
+            var student = await _studentRepository.GetByIdAsync(id);
+
+            // Se não encontrar o aluno, retorna null
+            if (student == null)
+            {
+                return Result<StudentResponseDto>.Fail("Aluno não existe.", ErrorType.NotFound);
+            }
+
+            if (student.IsActive == false)
+            {
+                return Result<StudentResponseDto>.Fail("Aluno está inativo. Reative para atualizar.", ErrorType.Conflict);
+            }
+
+            if (student.DocumentNumber != dto.DocumentNumber)
+            {
+                var documentExists =
+                    await _studentRepository.DocumentExistsAsync(
+                        dto.DocumentNumber,
+                        id
+                    );
+
+                if (documentExists)
+                {
+                    return Result<StudentResponseDto>.Fail(
+                        "Já existe outro aluno com este documento.",
+                        ErrorType.Conflict
+                    );
+                }
+            }
+
+            // Se encontrou o aluno pelo ID e está ativo, a variável studente não será null, logo o método não executou o return acima, 
+            // passando para o passo abaixo onde atualiza os campos do student, usando as informações recebidas no DTO de atualização (UpdateStudentDto).
+            student.FullName = dto.FullName;
+            student.DocumentType = dto.DocumentType;
+            student.DocumentNumber = dto.DocumentNumber;
+            student.DateOfBirth = dto.DateOfBirth;
+
+            // Salva no banco e retorna true para indicar sucesso
+            await _studentRepository.UpdateAsync(student);
+
+            await _studentRepository.SaveChangesAsync();
+
+            var response = new StudentResponseDto
+            {
+                Id = student.Id,
+                FullName = student.FullName,
+                DocumentType = student.DocumentType.ToString(),
+                DocumentNumber = student.DocumentNumber,
+                DateOfBirth = student.DateOfBirth,
+                IsActive = student.IsActive
+            };
+
+            return Result<StudentResponseDto>.Ok(response);
+        }
+
+        public async Task<Result> DeactivateAsync(Guid id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+
+            if (student == null)
+            {
+                return Result.Fail("Aluno não encontrado.", ErrorType.NotFound);
+            }
+
+            if (!student.IsActive)
+            {
+                return Result.Fail("Aluno já está inativo.", ErrorType.Conflict);
+            }
+
+            // Soft Delete: Em vez de remover o registro, marcamos como inativo
+            student.IsActive = false;
+            student.DeactivatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            await _studentRepository.SaveChangesAsync();
+
+            return Result.Ok("Aluno desativado com sucesso.");
+        }
+
+        public async Task<Result> ReactivateAsync(Guid id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+
+            if (student == null)
+                return Result.Fail("Aluno não encontrado.", ErrorType.NotFound);
+
+            if (student.IsActive)
+                return Result.Fail("Aluno já está ativo.", ErrorType.Conflict);
+
+            student.IsActive = true;
+            student.DeactivatedAt = null;
+
+            await _studentRepository.SaveChangesAsync();
+
+            return Result.Ok("Aluno reativado com sucesso.");
+        }
+
+        public async Task<Result> DeleteAsync(Guid id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+
+            if (student == null)
+            {
+                return Result.Fail(
+                    "Aluno não encontrado.",
+                    ErrorType.NotFound
+                );
+            }
+
+            if (student.DeactivatedAt == null)
+            {
+                return Result.Fail(
+                    "Aluno ainda está ativo. Antes de deletar, desative o aluno.",
+                    ErrorType.Conflict
+                );
+            }
+
+            if (student.DeactivatedAt > DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5)))
+            {
+                return Result.Fail(
+                    "Aluno foi desativado há menos de 5 anos. Aguarde o período de retenção.",
+                    ErrorType.Conflict
+                );
+            }
+
+            await _studentRepository.DeleteAsync(student);
+
+            await _studentRepository.SaveChangesAsync();
+
+            return Result.Ok("Aluno deletado com sucesso.");
+        }
     }
-
-    public async Task<Result> DeactivateAsync(Guid id)
-    {
-      var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
-
-      if (student == null)
-      {
-        return Result.Fail("Aluno não encontrado.", ErrorType.NotFound);
-      }
-
-      if (!student.IsActive)
-      {
-        return Result.Fail("Aluno já está inativo.", ErrorType.Conflict);
-      }
-
-      // Soft Delete: Em vez de remover o registro, marcamos como inativo
-      student.IsActive = false;
-      student.DeactivatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
-
-      await _context.SaveChangesAsync();
-
-      return Result.Ok("Aluno desativado com sucesso.");
-    }
-
-    public async Task<Result> ReactivateAsync(Guid id)
-    {
-      var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
-
-      if (student == null)
-        return Result.Fail("Aluno não encontrado.", ErrorType.NotFound);
-
-      if (student.IsActive)
-        return Result.Fail("Aluno já está ativo.", ErrorType.Conflict);
-
-      student.IsActive = true;
-      student.DeactivatedAt = null;
-
-      await _context.SaveChangesAsync();
-
-      return Result.Ok("Aluno reativado com sucesso.");
-    }
-
-    public async Task<Result> DeleteAsync(Guid id)
-    {
-      var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
-
-      if (student == null)
-      {
-        return Result.Fail(
-            "Aluno não encontrado.",
-            ErrorType.NotFound
-        );
-      }
-
-      if (student.DeactivatedAt == null)
-      {
-        return Result.Fail(
-            "Aluno ainda está ativo. Antes de deletar, desative o aluno.",
-            ErrorType.Conflict
-        );
-      }
-
-      if (student.DeactivatedAt > DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5)))
-      {
-        return Result.Fail(
-            "Aluno foi desativado há menos de 5 anos. Aguarde o período de retenção.",
-            ErrorType.Conflict
-        );
-      }
-
-      _context.Students.Remove(student);
-
-      await _context.SaveChangesAsync();
-
-      return Result.Ok("Aluno deletado com sucesso.");
-    }
-  }
 }

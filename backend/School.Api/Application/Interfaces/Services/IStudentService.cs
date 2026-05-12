@@ -2,7 +2,7 @@
 using School.Api.Application.Common;
 using School.Api.Application.DTOs.Students;
 
-namespace School.Api.Application.Services.Interfaces
+namespace School.Api.Application.Interfaces.Services
 {
   /// Interface responsável por definir o contrato do serviço de alunos.
 

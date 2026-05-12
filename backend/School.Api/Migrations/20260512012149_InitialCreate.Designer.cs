@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using School.Api.Infrastructure.Data;
@@ -11,9 +12,11 @@ using School.Api.Infrastructure.Data;
 namespace School.Api.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260512012149_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,69 +29,91 @@ namespace School.Api.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("created_at");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasMaxLength(8)
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("date_of_birth");
 
                     b.Property<DateOnly?>("DeactivatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("deactivated_at");
 
                     b.Property<string>("DocumentNumber")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("document_number");
 
                     b.Property<int>("DocumentType")
                         .HasMaxLength(11)
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("document_type");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("full_name");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_students");
 
                     b.HasIndex("DocumentNumber")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_students_document_number");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("students", (string)null);
                 });
 
             modelBuilder.Entity("StudentAnamnesis", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)");
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("content");
 
                     b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("created_at");
 
                     b.Property<Guid>("StudentId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_id");
 
                     b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_student_anamneses");
 
                     b.HasIndex("StudentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_student_anamneses_student_id");
 
-                    b.ToTable("StudentAnamneses", (string)null);
+                    b.ToTable("student_anamneses", (string)null);
                 });
 
             modelBuilder.Entity("StudentAnamnesis", b =>
@@ -97,7 +122,8 @@ namespace School.Api.Migrations
                         .WithOne("Anamnesis")
                         .HasForeignKey("StudentAnamnesis", "StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_student_anamneses_students_student_id");
 
                     b.Navigation("Student");
                 });

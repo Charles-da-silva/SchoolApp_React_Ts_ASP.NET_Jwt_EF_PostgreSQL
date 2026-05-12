@@ -37,7 +37,7 @@ namespace School.Api.Infrastructure.Configurations
             .WithOne(a => a.Student)
             .HasForeignKey<StudentAnamnesis>(a => a.StudentId);
 
-      builder.ToTable("Students");
+      builder.ToTable("students");
     }
   }
 }

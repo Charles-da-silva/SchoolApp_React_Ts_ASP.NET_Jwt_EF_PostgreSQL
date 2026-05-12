@@ -33,6 +33,8 @@ namespace School.Api.Domain.Entities
     /// Número do documento (CPF ou Certidão)
     public string DocumentNumber { get; set; } = string.Empty;
 
+    public string Email { get; set; } = string.Empty;
+
     /// Ficha médica/anamnese (vem da entidade StudentAnamnesis.cs)
     public StudentAnamnesis? Anamnesis { get; set; }
 

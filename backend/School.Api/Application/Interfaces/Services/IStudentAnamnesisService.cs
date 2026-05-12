@@ -2,7 +2,7 @@
 using School.Api.Application.Common;
 using School.Api.Application.DTOs.StudentsAnamnesis;
 
-namespace School.Api.Application.Services.Interfaces
+namespace School.Api.Application.Interfaces.Services
 {
   public interface IStudentAnamnesisService
   {
