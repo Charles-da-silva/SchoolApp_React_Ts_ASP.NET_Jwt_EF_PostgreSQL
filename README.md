@@ -8,8 +8,7 @@ explicações técnicas, enquanto eu realizo o estudo, compreensão, validação
 O objetivo da criação do projeto é vivenciar uma experiência próxima à realidade de mercado, simulando o cenário onde um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de
 compreender o problema, buscar, implementar, testar e evoluir soluções até entregar o melhor produto possível.
 <br><br>
-OBS.: Projeto pausado para entrega de uma atividade extensinista da faculdade
-<br><br>
+
 
 ## 🎯 Objetivos do Projeto
 
@@ -18,15 +17,26 @@ Este projeto possui três objetivos principais:
 1. **Uso real**
    - Atender uma escola pequena (≈ 60 alunos)
    - Resolver problemas reais do dia a dia administrativo
+   - Construir um sistema evolutivo e escalável
 
 2. **Aprendizado técnico**
-   - Aprender desenvolvimento backend e frontend moderno
-   - Entender arquitetura de software aplicada ao mercado
-   - Desenvolver APIs, autenticação e persistência de dados
-   - Aplicar princípios SOLID e boas práticas
+   - Backend moderno com ASP.NET Core
+   - Frontend moderno com React + TypeScript
+   - Persistência híbrida com EF Core + Dapper
+   - Arquitetura em camadas
+   - APIs REST
+   - SOLID
+   - DTO Pattern
+   - Repository Pattern
+   - Soft Delete
+   - Error Handling
+   - Async/Await
+   - Autenticação JWT
+   - PostgreSQL
+   - Docker
 
 3. **Comprovação de experiência**
-   - Demonstrar evolução contínua no GitHub
+   - Registrar evolução técnica no GitHub
    - Criar um histórico real de decisões técnicas
    - Servir como portfólio para vagas de estágio / dev júnior
 <br>
@@ -36,12 +46,15 @@ Este projeto possui três objetivos principais:
 
 |    Camada     |          Tecnologia           |         Motivo da escolha         |
 |---------------|-------------------------------|-----------------------------------|
-| Frontend      | React + TypeScript (Vite)     | Alta demanda no mercado           |
-| Backend       | ASP.Net Core MVC (C#)         | Robusto e amplamente utilizado    |
-| ORM           | Entity Framework Core         | Padrão consolidado                |
+| Frontend      | React + TypeScript (Vite)     | Interface moderna e tipada        |
+| Backend       | ASP.NET Core Web API (C#)     | Robusto e amplamente utilizado    |
+| ORM           | Entity Framework Core         | Escrita e persistência            |
+| Micro ORM     | Dapper                        | Consultas performáticas           |
 | Banco         | PostgreSQL em Docker          | Open-source e baixo custo         |
 | Auth          | JWT                           | Segurança moderna                 |
+| Documentação  | Swagger                       | Testes e documentação             |
 | Versionamento | Git + GitHub                  | Histórico e colaboração           |
+
 
 <br>
 
@@ -67,7 +80,6 @@ O projeto é desenvolvido por **fases**, como em metodologias ágeis como SCRUM,
 6.  Autenticação
 7.  Evolução funcional e deploy
 
-Cada etapa é explicada e versionada neste repositório.
 <br><br>
 
 ## 📈 Status do Projeto
@@ -90,14 +102,11 @@ Cada etapa é explicada e versionada neste repositório.
 🔹 Arquitetura
 
    - Modelagem de Dados (DER): [Planejamento completo das entidades (Students, Responsibles, Enrollments, Employees, Classes) e seus relacionamentos (1:N e N:N)](Docs/DatabaseSchema_ERD.png)
-   - Separação em camadas (Controller → Service → Infrastructure)
-   - Extração das regras de negócio para a camada de Service
-   - Implementação da interface `IStudentService`
+   - Separação em camadas (Controller → Service → Repository → Banco de Dados)
    - Aplicação do princípio da Inversão de Dependência (SOLID)
    - Desacoplamento do Controller do DbContext
    - Implementação de `BaseController` para padronização de respostas
-   - Implementação de `ErrorType` e `Result<T>` para controle padronizado
-      de erros e retornos
+   - Implementação de `ErrorType` e `Result<T>` para controle padronizado de erros e retornos
 
 🔹 Banco de Dados
 
@@ -138,25 +147,55 @@ Cada etapa é explicada e versionada neste repositório.
 
    A aplicação segue uma estrutura baseada em camadas:
 
-   - Controllers → Responsáveis apenas pela camada HTTP (entrada e saída)
-   - Services → Responsáveis pelas regras de negócio e casos de uso
-   - DTOs → Contratos de comunicação externa
-   - Entities (Domain) → Representação do domínio e estrutura das tabelas
-   - Infrastructure (DbContext) → Persistência de dados via EF Core
-   - Migrations → Controle de versionamento do banco
+   🔹 Controllers
+
+      Responsáveis apenas pela camada HTTP:
+
+      receber requisições;
+      validar entrada automática;
+      retornar status HTTP;
+      chamar Services.
+
+      Os Controllers não acessam banco diretamente.
+
+   🔹 Services
+
+      Responsáveis pelas regras de negócio:
+
+      - validações de domínio;
+      - orquestração;
+      - tratamento de regras;
+      - controle de fluxo da aplicação.
+
+      Os Services dependem apenas de abstrações (interfaces).
+
+   🔹 Repositories
+
+      Responsáveis pelo acesso aos dados.
+
+      O projeto utiliza abordagem híbrida:
+
+      Entity Framework Core usado principalmente para:
+
+      - INSERT
+      - UPDATE
+      - DELETE
+      - controle de tracking
+      - persistência transacional
+
+      Dapper usado principalmente para:
+
+      - GET All
+      - GET ById (para algumas entidades como Anamnesis)
+      - consultas otimizadas
+      - projeções específicas
+      - leitura performática
+
+      Essa abordagem segue um padrão comum de mercado chamado:
+
+         CQRS simplificado / Separação de leitura e escrita.
 <br>
 
-📌 Fluxo atual:
-
-   Controller → Service → DbContext → Banco de Dados
-
-   Essa estrutura permite:
-
-   - Maior testabilidade
-   - Melhor manutenção
-   - Desacoplamento entre camadas
-   - Evolução futura do sistema sem impacto estrutural
-<br>
 
 🎯 Próximos Passos
 
@@ -261,8 +300,7 @@ Cada etapa é explicada e versionada neste repositório.
 
 🔴 Problema com DateTime e Fuso Horário
 
-   Inicialmente os campos `DateOfBirth`, `CreatedAt` e `DeactivatedAt`
-   utilizavam `DateTime`.
+   Inicialmente os campos `DateOfBirth`, `CreatedAt` e `DeactivatedAt` utilizavam `DateTime`.
 
    Ao consumir no frontend, ocorria conversão automática de UTC para horário local (pt-BR), causando em alguns casos a exibição de um dia a menos, dependendo do horário armazenado.
 
