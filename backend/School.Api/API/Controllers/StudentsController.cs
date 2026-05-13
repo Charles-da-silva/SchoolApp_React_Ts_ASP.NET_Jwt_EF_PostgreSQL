@@ -29,19 +29,15 @@ namespace School.Api.API.Controllers
     {
          // Campo privado para armazenar o DbContext
         private readonly IStudentService _studentService;
-        private readonly IStudentAnamnesisService _anamnesisService;
+        
         
         /*
             Injeção de Dependência do serviço.       
             O .NET cria o StudentService automaticamente porque registramos no Program.cs. 
         */
-        public StudentsController(
-            IStudentService studentService,
-            IStudentAnamnesisService anamnesisService
-            )
+        public StudentsController(IStudentService studentService)
         {
-            _studentService = studentService;
-            _anamnesisService = anamnesisService;
+            _studentService = studentService;            
         }
 
         /*
@@ -202,38 +198,6 @@ namespace School.Api.API.Controllers
                 return HandleFailure(result);
 
             return NoContent();
-        }
-
-        /* =========================================================
-        ENDPOINTS DA FICHA DE ANAMNESIS
-        ========================================================== */
-
-        [HttpPost("{studentId}/anamnesis")]
-        public async Task<IActionResult> CreateAnamnesis(
-            Guid studentId,
-            StudentAnamnesisCreateDto dto)
-        {
-            var result = await _anamnesisService.CreateAsync(studentId, dto);
-
-            return HandleResult(result);
-        }
-
-        [HttpGet("{studentId}/anamnesis")]
-        public async Task<IActionResult> GetAnamnesis(Guid studentId)
-        {
-            var result = await _anamnesisService.GetByStudentIdAsync(studentId);
-
-            return HandleResult(result);
-        }
-
-        [HttpPut("{studentId}/anamnesis")]
-        public async Task<IActionResult> UpdateAnamnesis(
-            Guid studentId,
-            StudentAnamnesisUpdateDto dto)
-        {
-            var result = await _anamnesisService.UpdateAsync(studentId, dto);
-
-            return HandleResult(result);
-        }
+        }        
     }
 }

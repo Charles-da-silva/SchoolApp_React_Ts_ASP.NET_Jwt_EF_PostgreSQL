@@ -39,6 +39,10 @@ builder.Services.AddControllers();
 */
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentAnamnesisService, StudentAnamnesisService>();
+
+builder.Services.AddScoped<IStudentAnamnesisRepository, StudentAnamnesisRepository>();
+builder.Services.AddScoped<IStudentAnamnesisReadRepository, StudentAnamnesisReadRepository>();
+
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentReadRepository, StudentReadRepository>();
 

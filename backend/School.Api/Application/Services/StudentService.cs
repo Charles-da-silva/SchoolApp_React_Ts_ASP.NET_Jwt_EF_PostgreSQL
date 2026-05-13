@@ -117,7 +117,7 @@ namespace School.Api.Application.Services
                 };
 
                 return Result<StudentResponseDto>.Fail(
-                    "Já existe um aluno com este documento.",
+                    "Já existe um aluno com este mesmo número de documento.",
                     ErrorType.Conflict,
                     existingDto
                 );
@@ -271,15 +271,13 @@ namespace School.Api.Application.Services
                 );
             }
 
-            /*
-
             if (student.DeactivatedAt > DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5)))
             {
                 return Result.Fail(
                     "Aluno foi desativado há menos de 5 anos. Aguarde o período de retenção.",
                     ErrorType.Conflict
                 );
-            }*/
+            }
 
             await _studentRepository.DeleteAsync(student);
 
