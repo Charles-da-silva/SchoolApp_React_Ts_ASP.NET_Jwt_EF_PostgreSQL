@@ -1,12 +1,10 @@
 # 🎓 School Management System
 
-Sistema web para gestão básica de uma escola de educação infantil (0 a 5 anos), desenvolvido como **projeto real aplicado a um cenário verdadeiro**, com foco em **arquitetura de software e boas práticas de mercado**, com intuito de aprendizado prático e evolução profissional.
+Experiência como Freelancer onde estou desenvolvendo um sistema web para gestão básica de uma escola de educação infantil (0 a 5 anos), com foco em arquitetura de software e boas práticas de mercado.
 
-Este projeto está sendo desenvolvido utilizando meus conhecimentos somados ao uso do ChatGPT como ferramenta de apoio técnico e mentoria. O ChatGPT auxilia na geração de código, sugestões arquiteturais e
-explicações técnicas, enquanto eu realizo o estudo, compreensão, validação, testes, ajustes e decisões estruturais do projeto.
+Este projeto está sendo desenvolvido utilizando meus conhecimentos somados ao uso do ChatGPT como ferramenta de apoio técnico e mentoria. O ChatGPT auxilia na geração de código, sugestões arquiteturais e explicações técnicas, enquanto eu realizo o estudo, compreensão, validação, testes, ajustes e decisões estruturais do projeto.
 
-O objetivo da criação do projeto é vivenciar uma experiência próxima à realidade de mercado, simulando o cenário onde um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de
-compreender o problema, buscar, implementar, testar e evoluir soluções até entregar o melhor produto possível.
+O objetivo da criação do projeto é vivenciar uma experiência próxima à realidade de mercado, simulando o cenário onde um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de compreender o problema, pesquisar, implementar, testar e evoluir soluções até entregar o melhor produto possível.
 <br><br>
 
 
