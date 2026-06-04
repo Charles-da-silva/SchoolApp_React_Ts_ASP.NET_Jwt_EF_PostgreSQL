@@ -4,7 +4,7 @@ Experiência como Freelancer onde estou desenvolvendo um sistema web para gestã
 
 Este projeto está sendo desenvolvido utilizando meus conhecimentos somados ao uso do ChatGPT (chatbot free) como ferramenta de apoio técnico e mentoria. O ChatGPT auxilia na geração de código, sugestões arquiteturais e explicações técnicas, enquanto eu realizo o estudo, compreensão, validação, testes, ajustes e decisões estruturais do projeto.
 
-O objetivo da criação do projeto é vivenciar uma experiência próxima à realidade de mercado, simulando o cenário onde um desenvolvedor é contratado para desenvolver uma solução para uma empresa, tendo de compreender o problema, pesquisar, implementar, testar e evoluir soluções até entregar o melhor produto possível.
+Neste estou experenciando um cenário real de mercado, onde um desenvolvedor autônomo é contratado para desenvolver uma solução para uma empresa, tendo de compreender o problema, pesquisar, implementar, testar e evoluir soluções até entregar o melhor produto possível, com evolução contínua.
 <br><br>
 
 
