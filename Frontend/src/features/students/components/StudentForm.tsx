@@ -1,59 +1,52 @@
-import { useEffect, useState } from "react"
-import type { StudentFormData } from "../types/StudentFormData"
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import type { StudentFormData } from "../types/StudentFormData";
 
 type Props = {
-  initialData?: StudentFormData
-  onSubmit: (data: StudentFormData) => Promise<void>
-}
+  initialData?: StudentFormData;
+  onSubmit: (data: StudentFormData) => Promise<void>;
+};
 
-/**
- * Form reutilizável para CREATE e EDIT.
- *
- * - Se receber initialData → modo edição
- * - Se não → modo criação
- */
 export function StudentForm({ initialData, onSubmit }: Props) {
   const [form, setForm] = useState<StudentFormData>({
     fullName: "",
-    documentType: "",
+    documentType: "1",
     documentNumber: "",
     dateOfBirth: "",
-  })
+    email: "",
+  });
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  // ⭐ preenche form quando vem dados do edit
   useEffect(() => {
     if (initialData) {
-      setForm(initialData)
+      setForm(initialData);
     }
-  }, [initialData])
+  }, [initialData]);
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) {
-    setForm(prev => ({
+  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }))
+    }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
 
     try {
-      setLoading(true)
-      await onSubmit(form)
+      setLoading(true);
+      await onSubmit(form);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 500 }}>
+    <form onSubmit={handleSubmit} className="max-w-xl space-y-5 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
       <div>
-        <label>Nome completo</label>
+        <label className="text-sm font-bold text-slate-700">Nome completo</label>
         <input
+          className="mt-2 w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
           name="fullName"
           value={form.fullName}
           onChange={handleChange}
@@ -62,22 +55,22 @@ export function StudentForm({ initialData, onSubmit }: Props) {
       </div>
 
       <div>
-        <label>Tipo Documento</label>
+        <label className="text-sm font-bold text-slate-700">Tipo Documento</label>
         <select
+          className="mt-2 w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
           name="documentType"
           value={form.documentType}
           onChange={handleChange}
         >
-          <option value="CPF">CPF</option>
-          <option value="BirthCertificateNumber">
-            Certidão de Nascimento
-          </option>
+          <option value="1">CPF</option>
+          <option value="2">Certidao de Nascimento</option>
         </select>
       </div>
 
       <div>
-        <label>Número do documento</label>
+        <label className="text-sm font-bold text-slate-700">Numero do documento</label>
         <input
+          className="mt-2 w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
           name="documentNumber"
           value={form.documentNumber}
           onChange={handleChange}
@@ -86,8 +79,20 @@ export function StudentForm({ initialData, onSubmit }: Props) {
       </div>
 
       <div>
-        <label>Data de nascimento</label>
+        <label className="text-sm font-bold text-slate-700">E-mail</label>
         <input
+          className="mt-2 w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
+          type="email"
+          name="email"
+          value={form.email ?? ""}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-slate-700">Data de nascimento</label>
+        <input
+          className="mt-2 w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
           type="date"
           name="dateOfBirth"
           value={form.dateOfBirth}
@@ -96,9 +101,12 @@ export function StudentForm({ initialData, onSubmit }: Props) {
         />
       </div>
 
-      <button disabled={loading}>
+      <button
+        className="rounded-lg bg-red-600 px-5 py-3 font-black text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+        disabled={loading}
+      >
         {loading ? "Salvando..." : "Salvar"}
       </button>
     </form>
-  )
+  );
 }

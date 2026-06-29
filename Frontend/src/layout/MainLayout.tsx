@@ -1,28 +1,14 @@
+import { Outlet } from "react-router-dom";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
-import { Outlet } from "react-router-dom";
-import { colors, spacing } from "../shared/styles/tokens";
-
-// MainLayout = casca da aplicação.
-
 
 export function MainLayout() {
   return (
-    <div style={{width: "calc(98vw)", background: "white", padding: 0, margin: 0}}>
+    <div className="min-h-screen bg-slate-100">
       <Header />
-
-      <div style={{ display: "flex",}}>
+      <div className="flex">
         <Sidebar />
-
-        <main
-            style={{
-                flex: 1,
-                padding: spacing.lg,
-                background: colors.background,
-                minHeight: "calc(100vh - 60px)",
-            }}
-        >
-          {/* Router renderiza página aqui */}
+        <main className="min-h-[calc(100vh-64px)] flex-1 bg-slate-100 p-6">
           <Outlet />
         </main>
       </div>

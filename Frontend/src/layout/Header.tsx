@@ -1,27 +1,22 @@
-/*
-Header = topo fixo da aplicação.
-Nunca possui lógica de negócio.
-Apenas layout global.
-*/
-
-import { colors, spacing } from "../shared/styles/tokens";
+import { useNavigate } from "react-router-dom";
 
 export function Header() {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    localStorage.removeItem("schoolapp:isAuthenticated");
+    navigate("/");
+  }
+
   return (
-    <header
-      style={{
-        height: "60px",
-        background: colors.primary,
-        color: "white",
-        display: "flex",
-        //position: "fixed",
-        alignItems: "center",
-        padding: `0 ${spacing.lg}`,
-        fontWeight: "bold",
-        fontSize: "30px"
-      }}
-    >
-      🎓 School App
+    <header className="flex h-16 items-center justify-between bg-sky-700 px-6 text-white shadow-sm">
+      <strong className="text-xl font-black">School App</strong>
+      <button
+        onClick={handleLogout}
+        className="rounded-lg bg-white/15 px-4 py-2 text-sm font-bold transition hover:bg-white/25"
+      >
+        Sair
+      </button>
     </header>
   );
 }

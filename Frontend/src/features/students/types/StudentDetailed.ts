@@ -11,6 +11,7 @@ export interface StudentDetailed {
   dateOfBirth: string
   documentType: string
   documentNumber: string
+  email?: string
   isActive: boolean
   createdAt: string
   deactivatedAt?: string

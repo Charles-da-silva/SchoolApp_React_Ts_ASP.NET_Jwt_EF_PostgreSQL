@@ -1,6 +1,7 @@
 import { api } from "../../../shared/services/api";
 import type { Student } from "../types/Student";
 import type { StudentDetailed } from "../types/StudentDetailed"
+import type { StudentFormData } from "../types/StudentFormData";
 
 /*
 Função responsável por buscar estudantes no backend.
@@ -35,12 +36,20 @@ export async function getStudentById(id: string) {
   return response.data.data as StudentDetailed
 }
 
-export async function createStudent(data: any) {
-  const response = await api.post("/students", data)
+function toStudentPayload(data: StudentFormData) {
+  return {
+    ...data,
+    documentType: Number(data.documentType),
+    email: data.email ?? "",
+  };
+}
+
+export async function createStudent(data: StudentFormData) {
+  const response = await api.post("/students", toStudentPayload(data))
   return response.data
 }
 
-export async function updateStudent(id: string, data: any) {
-  const response = await api.put(`/students/${id}`, data)
+export async function updateStudent(id: string, data: StudentFormData) {
+  const response = await api.put(`/students/${id}`, toStudentPayload(data))
   return response.data
 }

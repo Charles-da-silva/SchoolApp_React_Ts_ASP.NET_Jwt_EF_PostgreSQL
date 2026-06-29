@@ -86,3 +86,4 @@ docker-compose.override.yml
 *.tmp
 *.cache
 .history/
+materiais/

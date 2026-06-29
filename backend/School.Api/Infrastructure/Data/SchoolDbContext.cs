@@ -35,6 +35,12 @@ namespace School.Api.Infrastructure.Data
 
     public DbSet<StudentAnamnesis> StudentAnamneses { get; set; }
 
+    public DbSet<SchoolClass> Classes { get; set; }
+
+    public DbSet<Enrollment> Enrollments { get; set; }
+
+    public DbSet<PendingAction> PendingActions { get; set; }
+
 
     // Aqui é onde configuramos as entidades via Fluent API, sobrescrevendo o método OnModelCreating
     protected override void OnModelCreating(ModelBuilder modelBuilder)

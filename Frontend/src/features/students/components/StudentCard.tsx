@@ -1,92 +1,41 @@
-/* ------------------------------------------
-Card é onde controlamos a exibição (visual) de cada aluno individualmente.
-A página (StudentPage) controla dados. O card controla visual.
-Se você quiser mudar: layout para grid, layout para tabela, layout compacto,
-adicionar botão, mudar cor, etc... tudo isso é responsabilidade do card.
-
-Responsabilidades:
-✔ exibir aluno
-✔ layout consistente
-❌ não buscar dados
-❌ não controlar estado global
----------------------------------------------*/
-
-// Importamos o tipo Student
-// Isso garante tipagem forte (TypeScript protege contra erros)
-import type { Student } from "../types/Student";
-import { formatDateToPtBr } from "../../../shared/utils/dateUtils";
-import { colors, spacing, radius, shadows } from "../../../shared/styles/tokens";
 import { useNavigate } from "react-router-dom";
+import { formatDateToPtBr } from "../../../shared/utils/dateUtils";
+import type { Student } from "../types/Student";
 
-// Aqui estamos dizendo:
-// Esse componente recebe a seguinte props:
-// 1) student → dados do aluno
+function getDocumentTypeLabel(documentType: string) {
+  return documentType === "2" || documentType === "BirthCertificateNumber" ? "Certidao de Nascimento" : "CPF";
+}
+
 type Props = {
   student: Student;
 };
 
-// Aqui estamos "desestruturando" as props
-// Isso significa que estamos pegando student
 export function StudentCard({ student }: Props) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   function handleClick() {
-    navigate(`/students/${student.id}`)
+    navigate(`/students/${student.id}`);
   }
 
   return (
-    <div 
+    <div
       onClick={handleClick}
-      style={{
-        background: colors.surface,
-        padding: spacing.lg,
-        borderRadius: radius.md,
-        boxShadow: shadows.sm,
-        border: `1px solid ${colors.border}`,
-        transition: "all 0.2s ease",
-        cursor: "pointer",
-      }}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.boxShadow = shadows.md)
-      }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.boxShadow = shadows.sm)
-      }
+      className="cursor-pointer rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
-      {/* HEADER */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: spacing.md,
-        }}
-      >
-        <strong style={{ color: colors.text }}>
-          {student.fullName}
-        </strong>
-
-        {/* STATUS BADGE */}
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <strong className="text-slate-950">{student.fullName}</strong>
         <span
-          style={{
-            background: student.isActive ? "#dcfce7" : "#fee2e2",
-            color: student.isActive ? "#166534" : "#991b1b",
-            padding: "4px 10px",
-            borderRadius: "999px",
-            fontSize: "12px",
-            fontWeight: 600,
-          }}
+          className={`rounded-full px-3 py-1 text-xs font-black ${
+            student.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
         >
           {student.isActive ? "Ativo" : "Inativo"}
         </span>
       </div>
 
-      {/* BODY */}
-      <div style={{ color: colors.textLight, fontSize: "14px" }}>
-        <p>
-          Documento:{" "}
-          {student.documentType === "BirthCertificateNumber" ? "Certidão de Nascimento" : "CPF"}
-        </p>
-        <p>Nº do documento: {student.documentNumber}</p>
+      <div className="space-y-1 text-sm text-slate-600">
+        <p>Documento: {getDocumentTypeLabel(student.documentType)}</p>
+        <p>No. do documento: {student.documentNumber}</p>
         <p>Nascimento: {formatDateToPtBr(student.dateOfBirth)}</p>
       </div>
     </div>

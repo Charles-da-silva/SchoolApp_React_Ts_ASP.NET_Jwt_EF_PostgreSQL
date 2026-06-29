@@ -3,4 +3,5 @@ export type StudentFormData = {
   documentType: string
   documentNumber: string
   dateOfBirth: string
+  email?: string
 }

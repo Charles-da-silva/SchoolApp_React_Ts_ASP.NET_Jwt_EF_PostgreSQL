@@ -1,37 +1,20 @@
-/*
-Sidebar = navegação principal do sistema.
-Depois ligaremos com React Router.
-*/
-
-//NavLink sabe qual rota está ativa.
 import { NavLink } from "react-router-dom";
 
-import { colors, spacing, radius } from "../shared/styles/tokens";
-
 export function Sidebar() {
-    const linkStyle = ({ isActive }: { isActive: boolean }) => ({
-    display: "block",
-    padding: spacing.md,
-    color: "white",
-    textDecoration: "none",
-    background: isActive ? colors.primary : "transparent",
-    borderRadius: radius.sm,
-  });
-
   return (
-     <aside
-      style={{
-        width: "220px",
-        background: colors.primaryDark,
-        padding: spacing.lg,
-        minHeight: "100vh",
-      }}
-    >
-      <h3 style={{ color: "white" }}>Menu</h3>
+    <aside className="min-h-[calc(100vh-64px)] w-64 bg-slate-950 p-5 text-white">
+      <h3 className="mb-5 text-sm font-black uppercase tracking-wide text-slate-400">Menu</h3>
 
-      <nav>
-        <NavLink to="/students" style={linkStyle}>
-          👨‍🎓 Alunos
+      <nav className="space-y-2">
+        <NavLink
+          to="/students"
+          className={({ isActive }) =>
+            `block rounded-lg px-4 py-3 font-bold transition ${
+              isActive ? "bg-sky-600 text-white" : "text-slate-300 hover:bg-white/10 hover:text-white"
+            }`
+          }
+        >
+          Alunos
         </NavLink>
       </nav>
     </aside>
