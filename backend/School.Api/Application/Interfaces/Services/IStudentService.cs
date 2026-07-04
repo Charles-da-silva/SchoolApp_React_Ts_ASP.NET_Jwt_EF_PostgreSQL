@@ -15,6 +15,8 @@ namespace School.Api.Application.Interfaces.Services
   {
     Task<Result<IEnumerable<StudentResponseDto>>> GetAllAsync(StudentFilterDto filter);
 
+    Task<Result<IEnumerable<StudentResponseDto>>> GetAllActivedStudentsAsync();
+
     Task<Result<StudentResponseDetailedDto>> GetByIdAsync(Guid id);
 
     Task<Result<StudentResponseDto>> CreateAsync(StudentCreateDto dto);

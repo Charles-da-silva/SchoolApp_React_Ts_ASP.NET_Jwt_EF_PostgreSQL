@@ -15,6 +15,8 @@ namespace School.Api.Application.DTOs.Students
 
         public string DocumentNumber { get; set; } = string.Empty;
 
+        public string? Email { get; set; }
+
         public bool IsActive { get; set; }
     }
 }

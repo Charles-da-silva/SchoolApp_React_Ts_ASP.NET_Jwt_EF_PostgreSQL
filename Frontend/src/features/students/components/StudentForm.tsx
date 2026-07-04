@@ -1,5 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import type { StudentFormData } from "../types/StudentFormData";
+import { useNavigate } from "react-router-dom";
+
 
 type Props = {
   initialData?: StudentFormData;
@@ -16,6 +18,7 @@ export function StudentForm({ initialData, onSubmit }: Props) {
   });
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialData) {
@@ -100,13 +103,20 @@ export function StudentForm({ initialData, onSubmit }: Props) {
           required
         />
       </div>
-
+      <div className="mt-5 grid grid-cols-2 gap-2 border-t border-slate-100 pt-4">
       <button
-        className="rounded-lg bg-red-600 px-5 py-3 font-black text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="mt-6 rounded-lg bg-blue-500 px-5 py-3 font-black text-white transition hover:bg-blue-800"
         disabled={loading}
       >
         {loading ? "Salvando..." : "Salvar"}
       </button>
+      <button
+          className="mt-6 rounded-lg bg-white px-5 py-3 border border-slate-600 font-black text-black transition hover:bg-red-400"
+          onClick={() => navigate("/students")}
+        >
+          Cancelar
+        </button>
+        </div>
     </form>
   );
 }

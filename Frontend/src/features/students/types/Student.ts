@@ -8,6 +8,7 @@ export type Student = {
   fullName: string;
   documentType: string;
   documentNumber: string;
+  email?: string;
   dateOfBirth: string;
   isActive: boolean;
 };

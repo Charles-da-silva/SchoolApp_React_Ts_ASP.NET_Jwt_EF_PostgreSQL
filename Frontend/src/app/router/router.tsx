@@ -4,6 +4,7 @@ import StudentsPage from "../../features/students/pages/StudentPage";
 import StudentDetailsPage from "../../features/students/pages/StudentDetailsPage";
 import StudentEditPage from "../../features/students/pages/StudentEditPage";
 import StudentCreatePage from "../../features/students/pages/StudentCreatePage";
+import StudentSearchPage from "../../features/students/pages/StudentSearchPage";
 import InstitutionalHome from "../../features/institutional/pages/InstitutionalHome";
 import LoginPage from "../../features/auth/pages/LoginPage";
 import { ProtectedRoute } from "../../features/auth/components/ProtectedRoute";
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
           {
             path: "/students/new",
             element: <StudentCreatePage />,
+          },
+          {
+            path: "/students/search",
+            element: <StudentSearchPage />,
           },
           {
             path: "/students/:id",

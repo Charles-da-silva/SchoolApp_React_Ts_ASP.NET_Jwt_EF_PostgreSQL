@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Grobold";
+  src: url("./assets/GROBOLD.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -30,4 +38,65 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.brand-logo-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.2em;
+  font-family: "Grobold", "Cooper Black", "Arial Rounded MT Bold", "Arial Black", sans-serif;
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.brand-logo-text__prefix {
+  display: inline-block;
+  paint-order: stroke fill;
+}
+
+.brand-logo-text__prefix {
+  color: #ffd83d;
+  -webkit-text-stroke: 0.055em #151515;
+  text-shadow:
+    0.045em 0.055em 0 #3d2d1f,
+    0.085em 0.095em 0 rgba(0, 0, 0, 0.35);
+}
+
+.brand-logo-text__monica-image {
+  display: inline-block;
+  width: 3.35em;
+  height: auto;
+  transform: translateY(0.16em);
+}
+
+.brand-logo-text--hero {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18em;
+  font-size: clamp(1rem, 6vw, 6rem);
+  text-align: center;
+}
+
+.brand-logo-text--hero .brand-logo-text__prefix {
+  display: block;
+  width: 100%;
+}
+
+.brand-logo-text--hero .brand-logo-text__monica-image {
+  width: min(4.2em, 100%);
+  transform: none;
+}
+
+.brand-logo-text--header {
+  font-size: clamp(1.0rem, 2vw, 1.85rem);
+}
+
+.brand-logo-text--login {
+  justify-content: center;
+  font-size: clamp(1.7rem, 8vw, 2.6rem);
+  text-align: center;
 }

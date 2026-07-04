@@ -14,13 +14,15 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-[#fffaf2] px-4 py-10">
-      <section className="w-full max-w-md rounded-lg border border-amber-100 bg-white p-8 shadow-sm">
-        <Link to="/" className="mx-auto mb-8 flex w-fit flex-col items-center gap-3 text-center">
-          <img src={logo} alt="Escola Infantil Turma da Monica" className="h-24 w-24 object-contain" />
-          <span className="text-lg font-black text-red-600">Escola Infantil Turma da Monica</span>
+    <main className="grid min-h-screen place-items-center bg-sky-700 px-4 py-10">
+      <section className="flex w-full max-w-4xl items-center gap-8 rounded-lg border border-amber-100 bg-white p-6 shadow-sm">
+        <div>
+          <Link to="/" className="mx-auto flex w-fit flex-col items-center text-center">
+          <img src={logo} alt="Escola Infantil Turma da Mônica" className="h-64 w-64 object-contain" />
+    
         </Link>
-
+</div>
+<div>
         <h1 className="text-2xl font-black text-slate-950">Acessar sistema</h1>
         <p className="mt-2 text-sm text-slate-600">Entre para carregar a area administrativa com menu lateral.</p>
 
@@ -55,6 +57,7 @@ export default function LoginPage() {
             Entrar
           </button>
         </form>
+        </div>
       </section>
     </main>
   );

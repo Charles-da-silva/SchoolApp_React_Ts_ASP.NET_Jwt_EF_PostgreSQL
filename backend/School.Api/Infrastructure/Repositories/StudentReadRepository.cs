@@ -19,6 +19,28 @@ public class StudentReadRepository : IStudentReadRepository
     {
         _context = context;
     }
+
+    public async Task<IEnumerable<StudentResponseDto>> GetActivedStudentsAsync()
+    {
+        var sql = @"
+            SELECT
+                s.id AS Id,
+                s.full_name AS FullName,
+                s.date_of_birth AS DateOfBirth,
+                s.document_type AS DocumentType,
+                s.document_number AS DocumentNumber,
+                s.email AS Email,
+                s.is_active AS IsActive
+            FROM students s
+            WHERE s.is_active = true
+            ORDER BY s.full_name ASC
+        ";
+        
+        using var connection = _context.CreateConnection();
+
+        return await connection.QueryAsync<StudentResponseDto>(sql);
+    }
+
     public async Task<IEnumerable<StudentResponseDto>> GetAllAsync(StudentFilterDto filter)
     {
         // StringBuilder ajuda a montar SQL dinâmico, para depois usar o sql.Append
@@ -28,6 +50,7 @@ public class StudentReadRepository : IStudentReadRepository
             SELECT
                 id AS Id,
                 full_name AS FullName,
+                date_of_birth AS DateOfBirth,
                 email AS Email,
                 document_type AS DocumentType,
                 document_number AS DocumentNumber,
@@ -62,6 +85,18 @@ public class StudentReadRepository : IStudentReadRepository
                 "DocumentNumber",
                 $"%{filter.DocumentNumber}%"
             );
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Email))
+        {
+            sql.Append(" AND email ILIKE @Email");
+            parameters.Add("Email", $"%{filter.Email}%");
+        }
+
+        if (filter.CreatedAfter.HasValue)
+        {
+            sql.Append(" AND created_at >= @CreatedAfter");
+            parameters.Add("CreatedAfter", filter.CreatedAfter.Value.ToDateTime(TimeOnly.MinValue));
         }
 
         // Filtros por idade

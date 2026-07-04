@@ -6,11 +6,9 @@ function getDocumentTypeLabel(documentType: string) {
   return documentType === "2" || documentType === "BirthCertificateNumber" ? "Certidao de Nascimento" : "CPF";
 }
 
-type Props = {
-  student: Student;
-};
 
-export function StudentCard({ student }: Props) {
+
+export function StudentCard({ student }: { student: Student }) {
   const navigate = useNavigate();
 
   function handleClick() {
@@ -19,7 +17,7 @@ export function StudentCard({ student }: Props) {
 
   return (
     <div
-      onClick={handleClick}
+      onClick={handleClick} // Chama a função que navega para a página de detalhes do aluno
       className="cursor-pointer rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="mb-4 flex items-start justify-between gap-4">
@@ -35,9 +33,12 @@ export function StudentCard({ student }: Props) {
 
       <div className="space-y-1 text-sm text-slate-600">
         <p>Documento: {getDocumentTypeLabel(student.documentType)}</p>
-        <p>No. do documento: {student.documentNumber}</p>
+        <p>Nº do documento: {student.documentNumber}</p>
         <p>Nascimento: {formatDateToPtBr(student.dateOfBirth)}</p>
+        <p>Idade: {Math.floor((new Date().getTime() - new Date(student.dateOfBirth).getTime()) / (1000 * 60 * 60 * 24 * 365.25))} anos</p>
       </div>
+
+      
     </div>
   );
 }

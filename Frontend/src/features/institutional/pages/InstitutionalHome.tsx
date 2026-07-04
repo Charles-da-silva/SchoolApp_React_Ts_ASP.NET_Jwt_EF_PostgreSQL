@@ -1,24 +1,35 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/turma-da-monica-logo.webp";
+import logoVideo from "../../../assets/Logo_video.webm";
+import { BrandLogoText } from "../../../shared/components/BrandLogoText";
 
 const menuItems = ["Proposta", "Turmas", "Rotina", "Contato"];
 
 export default function InstitutionalHome() {
+  const [showHeroVideo, setShowHeroVideo] = useState(true);
+
+  useEffect(() => {
+    setShowHeroVideo(true);
+
+    const fallbackTimer = window.setTimeout(() => {
+      setShowHeroVideo(false);
+    }, 10000);
+
+    return () => window.clearTimeout(fallbackTimer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#fffaf2] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-amber-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-amber-100 bg-sky-700 backdrop-blur">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="Escola Infantil Turma da Monica" className="h-14 w-14 rounded-full object-contain" />
-            <div>
-              <strong className="block text-base font-black text-red-600 sm:text-lg">Escola Infantil</strong>
-              <span className="text-sm font-bold text-sky-700">Turma da Monica</span>
-            </div>
+            <BrandLogoText size="header" />
           </Link>
 
-          <nav className="hidden items-center gap-8 text-sm font-bold text-slate-700 md:flex">
+          <nav className="hidden items-center brand-logo-text__prefix gap-8 text-lg font-bold text-slate-700 md:flex">
             {menuItems.map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-red-600">
+              <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-red-600" style={{ padding: "30px" }}>
                 {item}
               </a>
             ))}
@@ -32,17 +43,36 @@ export default function InstitutionalHome() {
 
       <main>
         <section className="border-b border-amber-100 bg-white">
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.85fr] lg:px-8 lg:py-16">
-            <div>
-              <p className="mb-4 inline-flex rounded-full bg-yellow-100 px-4 py-2 text-sm font-black text-yellow-800">
-                Educacao infantil com acolhimento, brincadeira e rotina
+          <div className="rounded-xl align-center grid max-w-7xl gap-1 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.85fr] lg:px-8 lg:py-8">
+            <div className="rounded-xl align-center mx-30 w-90 ">
+              {showHeroVideo ? (
+                  <>
+                  
+                    <video
+                      src={logoVideo}
+                      className="mx-auto aspect-square h-110 w-90 object-cover object-center"
+                      autoPlay
+                      playsInline
+                      onEnded={() => setShowHeroVideo(false)}
+                    >
+                      Seu navegador nÃo suporta vídeos.
+                    </video>
+                  
+                  </>
+                ) : (                  
+                  <img src={logo} alt="Escola Infantil Turma da Mônica" className="h-94 w-94 object-contain" />
+                )}
+            </div>
+            
+            <div >
+              <p className="mb-4 inline-flex rounded-full bg-yellow-300 px-4 py-2 text-lg font-black text-yellow-800">
+                Educação infantil com acolhimento, brincadeira e rotina
               </p>
-              <h1 className="max-w-3xl text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                Escola Infantil Turma da Monica
-              </h1>
+                              
+              
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                Um espaco colorido, seguro e afetivo para criancas aprenderem com autonomia,
-                convivencia e experiencias pensadas para cada fase da infancia.
+                Um espaco colorido, seguro e afetivo para crianças aprenderem com autonomia,
+                convivência e experiências pensadas para cada fase da infância.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href="#contato" className="rounded-lg bg-sky-600 px-6 py-3 text-sm font-black text-white shadow-sm transition hover:bg-sky-700">
@@ -52,15 +82,11 @@ export default function InstitutionalHome() {
                   Conhecer proposta
                 </a>
               </div>
-            </div>
-
-            <div className="rounded-lg border border-amber-100 bg-[#fff4d8] p-6 shadow-sm">
-              <img src={logo} alt="Logo Turma da Monica" className="mx-auto max-h-80 w-full object-contain" />
-            </div>
+            </div>            
           </div>
         </section>
-
-        <section id="proposta" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        
+        <section id="proposta" className="mx-auto max-w-7xl bg-yellow-300 rounded-xl py-14 sm:px-6 lg:px-8">
           <div className="grid gap-4 md:grid-cols-3">
             {[
               ["Acolhimento", "Adaptacao respeitosa e vinculo proximo com as familias."],
@@ -74,21 +100,21 @@ export default function InstitutionalHome() {
             ))}
           </div>
         </section>
-
-        <section id="turmas" className="bg-sky-700 py-14 text-white">
+        <br />
+        <section id="turmas" className="mx-auto  max-w-7xl bg-sky-400 rounded-xl py-14 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-black">Turmas por fase</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-4">
               {["Bercario", "Maternal", "Pre I", "Pre II"].map((item) => (
-                <div key={item} className="rounded-lg bg-white/12 p-5 font-black ring-1 ring-white/25">
+                <div key={item} className="rounded-lg bg-white p-5 font-black ring-1 ring-white/25">
                   {item}
                 </div>
               ))}
             </div>
           </div>
         </section>
-
-        <section id="rotina" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <br />
+        <section id="rotina" className="mx-auto max-w-7xl bg-red-300 rounded-xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[0.7fr_1fr]">
             <h2 className="text-3xl font-black text-slate-950">Uma rotina clara para a crianca se sentir segura.</h2>
             <div className="grid gap-3 sm:grid-cols-2">

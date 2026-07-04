@@ -71,6 +71,18 @@ namespace School.Api.API.Controllers
 
         return Ok(result.Data);
         }
+
+
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<StudentResponseDto>>> GetActivedStudents()
+        {
+        var result = await _studentService.GetAllActivedStudentsAsync();
+
+        if (!result.Success)
+            return HandleFailure(result);
+
+        return Ok(result.Data);
+        }
         
         /*
         =========================
@@ -80,7 +92,7 @@ namespace School.Api.API.Controllers
             - Buscar um aluno específico pelo ID
             - Retornar os dados do aluno em formato JSON
         */
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {   
             var result = await _studentService.GetByIdAsync(id);

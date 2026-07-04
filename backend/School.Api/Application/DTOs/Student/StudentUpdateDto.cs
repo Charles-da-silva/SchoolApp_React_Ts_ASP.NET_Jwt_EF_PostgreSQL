@@ -24,7 +24,7 @@ namespace School.Api.Application.DTOs.Students
         public string DocumentNumber { get; set; } = string.Empty;
         
         [EmailAddress(ErrorMessage = "O formato do e-mail é inválido.")]
-        public string? Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
 
 
     }

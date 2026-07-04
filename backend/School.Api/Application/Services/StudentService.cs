@@ -72,6 +72,13 @@ namespace School.Api.Application.Services
             return Result<IEnumerable<StudentResponseDto>>.Ok(students);
         }
 
+        public async Task<Result<IEnumerable<StudentResponseDto>>> GetAllActivedStudentsAsync()
+        {
+            var students = await _studentReadRepository.GetActivedStudentsAsync();
+
+            return Result<IEnumerable<StudentResponseDto>>.Ok(students);
+        }
+
         public async Task<Result<StudentResponseDetailedDto>> GetByIdAsync(Guid id)
         {
             var student =
@@ -112,6 +119,7 @@ namespace School.Api.Application.Services
                     FullName = existingStudent.FullName,
                     DocumentType = existingStudent.DocumentType.ToString(),
                     DocumentNumber = existingStudent.DocumentNumber,
+                    Email = existingStudent.Email,
                     DateOfBirth = existingStudent.DateOfBirth,
                     IsActive = existingStudent.IsActive
                 };
@@ -145,6 +153,7 @@ namespace School.Api.Application.Services
                 FullName = student.FullName,
                 DocumentType = student.DocumentType.ToString(),
                 DocumentNumber = student.DocumentNumber,
+                Email = student.Email,
                 DateOfBirth = student.DateOfBirth,
                 IsActive = student.IsActive
             };
@@ -191,6 +200,7 @@ namespace School.Api.Application.Services
             student.DocumentType = dto.DocumentType;
             student.DocumentNumber = dto.DocumentNumber;
             student.DateOfBirth = dto.DateOfBirth;
+            student.Email = dto.Email ?? string.Empty;
 
             // Salva no banco e retorna true para indicar sucesso
             await _studentRepository.UpdateAsync(student);
@@ -203,6 +213,7 @@ namespace School.Api.Application.Services
                 FullName = student.FullName,
                 DocumentType = student.DocumentType.ToString(),
                 DocumentNumber = student.DocumentNumber,
+                Email = student.Email,
                 DateOfBirth = student.DateOfBirth,
                 IsActive = student.IsActive
             };
