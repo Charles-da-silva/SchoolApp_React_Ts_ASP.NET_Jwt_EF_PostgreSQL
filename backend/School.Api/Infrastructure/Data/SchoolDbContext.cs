@@ -41,6 +41,10 @@ namespace School.Api.Infrastructure.Data
 
     public DbSet<PendingAction> PendingActions { get; set; }
 
+    // Responsibles and junction
+    public DbSet<School.Api.Domain.Entities.Responsible> Responsibles { get; set; }
+    public DbSet<School.Api.Domain.Entities.StudentResponsible> StudentResponsibles { get; set; }
+
 
     // Aqui é onde configuramos as entidades via Fluent API, sobrescrevendo o método OnModelCreating
     protected override void OnModelCreating(ModelBuilder modelBuilder)

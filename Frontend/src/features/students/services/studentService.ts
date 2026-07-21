@@ -104,3 +104,44 @@ export async function reactivateStudent(id: string) {
 export async function deleteStudent(id: string) {
   await api.delete(`/students/${id}/delete`)
 }
+
+// Responsible / StudentResponsible related API helpers
+export async function searchResponsibles(query: string) {
+  const response = await api.get('/responsibles', { params: { query } });
+  return response.data;
+}
+
+export async function createResponsible(payload: any) {
+  const response = await api.post('/responsibles', payload);
+  return response.data;
+}
+
+export async function getStudentResponsibles(studentId: string) {
+  const response = await api.get('/student-responsible', { params: { studentId } });
+  return response.data;
+}
+
+export async function getStudentResponsiblesByResponsible(responsibleId: string) {
+  const response = await api.get('/student-responsible', { params: { responsibleId } });
+  return response.data;
+}
+
+export async function getResponsibleById(id: string) {
+  const response = await api.get(`/responsibles/${id}`);
+  return response.data;
+}
+
+export async function createStudentResponsible(payload: any) {
+  const response = await api.post('/student-responsible', payload);
+  return response.data;
+}
+
+export async function updateStudentResponsible(id: string, payload: any) {
+  const response = await api.put(`/student-responsible/${id}`, payload);
+  return response.data;
+}
+
+export async function deleteStudentResponsible(id: string) {
+  const response = await api.delete(`/student-responsible/${id}`);
+  return response.data;
+}

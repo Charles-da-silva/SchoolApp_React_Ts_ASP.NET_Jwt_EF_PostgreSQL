@@ -2,6 +2,8 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 import { MainLayout } from "../../layout/MainLayout";
 import StudentsPage from "../../features/students/pages/StudentPage";
 import StudentDetailsPage from "../../features/students/pages/StudentDetailsPage";
+import ResponsibleListPage from "../../features/students/pages/ResponsibleListPage";
+import ResponsibleDetailsPage from "../../features/students/pages/ResponsibleDetailsPage";
 import StudentEditPage from "../../features/students/pages/StudentEditPage";
 import StudentCreatePage from "../../features/students/pages/StudentCreatePage";
 import StudentSearchPage from "../../features/students/pages/StudentSearchPage";
@@ -47,6 +49,14 @@ export const router = createBrowserRouter([
           {
             path: "/students/:id/edit",
             element: <StudentEditPage />,
+          },
+          {
+            path: "/responsibles",
+            element: <ResponsibleListPage />,
+          },
+          {
+            path: "/responsibles/:id",
+            element: <ResponsibleDetailsPage />,
           },
         ],
       },

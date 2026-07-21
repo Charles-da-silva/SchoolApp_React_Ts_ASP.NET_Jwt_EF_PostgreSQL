@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AppLoader } from "../../../shared/components/AppLoader";
 import { formatDateToPtBr } from "../../../shared/utils/dateUtils";
 import { useStudent } from "../hooks/useStudents";
+import StudentResponsiblesSection from "../components/StudentResponsiblesSection";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { deactivateStudent, deleteStudent, reactivateStudent } from "../services/StudentService";
@@ -123,6 +124,9 @@ export default function StudentDetailsPage() {
       ) : (
         <p className="mt-3 text-slate-600">Nenhuma anamnese cadastrada.</p>
       )}
+
+      {/* Responsáveis: seção adicionada */}
+      <StudentResponsiblesSection studentId={student.id} />
 
       <div className="mt-5 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4">
         
